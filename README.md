@@ -1,6 +1,6 @@
 # study_app
 
-Study related app that enhances user skills related to market trendings
+Study related app that enhances user skills related to market trendings.
 
 ## Getting Started
 
