@@ -1,6 +1,6 @@
 # study_app
 
-A new Flutter project.
+Study related app that enhances user skills related to market trendings
 
 ## Getting Started
 
