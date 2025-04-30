@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:study_app/externals/links.dart';
+import 'package:study_app/menu/home_navigation.dart';
 import 'package:study_app/utils/colors.dart';
 import 'package:study_app/widgets/course_box.dart';
 
