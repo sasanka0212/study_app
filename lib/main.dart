@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:study_app/menu/home_navigation.dart';
 import 'package:study_app/pages/home.dart';
+import 'package:study_app/pages/mcq_question.dart';
 
 void main() {
   runApp(const MyApp());
