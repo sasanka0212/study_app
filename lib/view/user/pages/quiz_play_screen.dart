@@ -1,9 +1,11 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:study_app/classes/question.dart';
 import 'package:study_app/classes/quiz.dart';
 import 'package:study_app/externals/all_courses.dart';
+import 'package:study_app/view/user/pages/quiz_result_screen.dart';
 import 'package:study_app/utils/colors.dart';
 
 class QuizPlayScreen extends StatefulWidget {
@@ -27,26 +29,39 @@ class _QuizPlayScreenState extends State<QuizPlayScreen>
   int _remainingMinutes = 0;
   int _remainingSeconds = 0;
   Timer? _timer;
+  Stopwatch? _activeTimer = Stopwatch();
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     _pageController = PageController();
-    _totalMinutes = questions[widget.quiz.name.toString()]! .length;
+    _totalMinutes = widget.quiz.questions.length;
     _remainingMinutes = _totalMinutes;
     _remainingSeconds = 0;
 
     _startTimer();
   }
 
+  void restart() {
+    _timer?.cancel();
+    _activeTimer!.reset();
+    _startTimer();
+  }
+
+  void resume() {
+    var timer = _timer;
+    if (timer == null || timer.isActive) return;
+    _startTimer();
+  }
+
   void _startTimer() {
+    _activeTimer!.start();
     _timer = Timer.periodic(Duration(seconds: 1), (timer) {
       setState(() {
         if (_remainingSeconds > 0) {
           _remainingSeconds--;
-        } 
-        else {
+        } else {
           if (_remainingMinutes > 0) {
             _remainingMinutes--;
             _remainingSeconds = 59;
@@ -59,6 +74,11 @@ class _QuizPlayScreenState extends State<QuizPlayScreen>
     });
   }
 
+  void _pauseTimer() {
+    _timer?.cancel();
+    _activeTimer!.stop();
+  }
+
   void _selectAnswer(int optionIndex) {
     if (_selectedAnswers[_currentQuestionIndex] == null) {
       setState(() {
@@ -68,9 +88,8 @@ class _QuizPlayScreenState extends State<QuizPlayScreen>
   }
 
   void _nextQuestion() {
-    if (_currentQuestionIndex <
-        questions[widget.quiz.name.toString()]!.length - 1) {
-            _pageController.nextPage(
+    if (_currentQuestionIndex < widget.quiz.questions.length - 1) {
+      _pageController.nextPage(
         duration: Duration(milliseconds: 300),
         curve: Curves.easeInOut,
       );
@@ -81,33 +100,36 @@ class _QuizPlayScreenState extends State<QuizPlayScreen>
 
   void _finishQuiz() {
     _timer?.cancel();
+    _activeTimer!.stop();
     int correctAnswers = _calculateScore();
-    ScaffoldMessenger.of(context).showSnackBar(
+    /*ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text("Quiz Completed"),
+        content: Text(
+          "Quiz Completed",
+          style: GoogleFonts.raleway(color: Colors.white),
+        ),
+        backgroundColor: Colors.greenAccent,
       ),
-    );
-    /*Navigator.pushReplacement(
+    );*/
+    Navigator.pushReplacement(
       context,
       MaterialPageRoute(
-        builder: QuizResultScreen(
+        builder: (context) => QuizResultScreen(
           quiz: widget.quiz,
-          totalQuestions: questions[widget.quiz.name.toString()]!.toList().length,
+          totalQuestions: widget.quiz.questions.length,
           correctAnswers: correctAnswers,
           selectedAnswers: _selectedAnswers,
         ),
       ),
-    );*/
+    );
   }
 
   int _calculateScore() {
     int correctAns = 0;
-    for (int i = 0; i < questions[widget.quiz.name.toString()]!.length; i++) {
+    for (int i = 0; i < widget.quiz.questions.length; i++) {
       final selectedAns = _selectedAnswers[i];
       if (selectedAns != null &&
-          selectedAns ==
-              questions[widget.quiz.name.toString()]!
-                  [i].correctIndex) {
+          selectedAns == widget.quiz.questions[i].correctIndex) {
         correctAns++;
       }
     }
@@ -153,76 +175,101 @@ class _QuizPlayScreenState extends State<QuizPlayScreen>
                   ),
                 ],
               ),
-              child: Column(children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    IconButton(
-                      onPressed: () => Navigator.pop(context),
-                      icon: const Icon(Icons.close),
-                      color: textPrimaryColor,
-                    ),
-                    Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        SizedBox(
-                          height: 55,
-                          width: 55,
-                          child: CircularProgressIndicator(
-                            backgroundColor: Colors.grey[300],
-                            value:
-                                (_remainingMinutes * 60 + _remainingSeconds) /
-                                    (_totalMinutes * 60),
-                            strokeWidth: 5,
-                            valueColor: AlwaysStoppedAnimation<Color>(
-                              _getTimerColor(),
+              child: Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      IconButton(
+                        onPressed: () => Navigator.pop(context),
+                        icon: const Icon(Icons.close),
+                        color: textPrimaryColor,
+                      ),
+                      GestureDetector(
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: primaryColor.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(50),
+                            border: Border.all(
+                              width: 2,
+                              color: primaryColor,
                             ),
                           ),
-                        ),
-                        Text(
-                          '$_remainingMinutes:${_remainingSeconds.toString().padLeft(2, '0')}',
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
-                            color: _getTimerColor(),
+                          padding: EdgeInsets.all(8),
+                          child: Icon(
+                            _timer!.isActive ? Icons.pause : Icons.play_arrow,
+                            color: primaryColor,
                           ),
                         ),
-                      ],
-                    ),
-                  ],
-                ),
-                SizedBox(
-                  height: 20,
-                ),
-                TweenAnimationBuilder<double>(
-                  tween: Tween(
-                    begin: 0,
-                    end: (_currentQuestionIndex + 1) /
-                        questions[widget.quiz.name.toString()]!.length,
+                        onTap: () => setState(() {
+                          if (_timer!.isActive) {
+                            _pauseTimer();
+                          } else {
+                            resume();
+                          }
+                        }),
+                      ),
+                      Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          SizedBox(
+                            height: 55,
+                            width: 55,
+                            child: CircularProgressIndicator(
+                              backgroundColor: Colors.grey[300],
+                              value:
+                                  (_remainingMinutes * 60 + _remainingSeconds) /
+                                      (_totalMinutes * 60),
+                              strokeWidth: 5,
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                _getTimerColor(),
+                              ),
+                            ),
+                          ),
+                          Text(
+                            '$_remainingMinutes:${_remainingSeconds.toString().padLeft(2, '0')}',
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                              color: _getTimerColor(),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
-                  duration: Duration(milliseconds: 300),
-                  builder: (context, progress, child) {
-                    return LinearProgressIndicator(
-                      borderRadius: BorderRadius.horizontal(
-                        left: Radius.circular(10),
-                        right: Radius.circular(10),
-                      ),
-                      value: progress,
-                      backgroundColor: Colors.grey[300],
-                      valueColor: AlwaysStoppedAnimation<Color>(
-                        primaryColor,
-                      ),
-                      minHeight: 6,
-                    );
-                  },
-                ),
-              ],),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  TweenAnimationBuilder<double>(
+                    tween: Tween(
+                      begin: 0,
+                      end: (_currentQuestionIndex + 1) /
+                          widget.quiz.questions.length,
+                    ),
+                    duration: Duration(milliseconds: 300),
+                    builder: (context, progress, child) {
+                      return LinearProgressIndicator(
+                        borderRadius: BorderRadius.horizontal(
+                          left: Radius.circular(10),
+                          right: Radius.circular(10),
+                        ),
+                        value: progress,
+                        backgroundColor: Colors.grey[300],
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          primaryColor,
+                        ),
+                        minHeight: 6,
+                      );
+                    },
+                  ),
+                ],
+              ),
             ),
             Expanded(
               child: PageView.builder(
                 physics: NeverScrollableScrollPhysics(),
-                itemCount:
-                    questions[widget.quiz.name.toString()]!.length,
+                itemCount: widget.quiz.questions.length,
                 controller: _pageController,
                 onPageChanged: (index) {
                   setState(() {
@@ -230,8 +277,7 @@ class _QuizPlayScreenState extends State<QuizPlayScreen>
                   });
                 },
                 itemBuilder: (context, index) {
-                  final question =
-                      questions[widget.quiz.name.toString()]![index];
+                  final question = widget.quiz.questions[index];
                   return _createQuestionCard(question, index);
                 },
               ),
@@ -243,7 +289,8 @@ class _QuizPlayScreenState extends State<QuizPlayScreen>
   }
 
   Widget _createQuestionCard(Question question, int index) {
-    return AnimatedContainer(
+    int totalQs = widget.quiz.questions.length;
+    return Container(
       margin: EdgeInsets.all(16),
       padding: EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -261,7 +308,7 @@ class _QuizPlayScreenState extends State<QuizPlayScreen>
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            "Question ${index + 1}",
+            "Question ${index + 1}/${totalQs}",
             style: TextStyle(
               color: textSecondaryColor,
               fontSize: 16,
@@ -351,9 +398,9 @@ class _QuizPlayScreenState extends State<QuizPlayScreen>
                 elevation: WidgetStatePropertyAll(6),
               ),
               child: Text(
-                index == questions[widget.quiz.name.toString()]!.toList().length - 1 
-                ? "Finish Quiz"
-                :"Next Question",
+                index == widget.quiz.questions.length - 1
+                    ? "Finish Quiz"
+                    : "Next Question",
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   color: Colors.white,
@@ -363,8 +410,6 @@ class _QuizPlayScreenState extends State<QuizPlayScreen>
           ),
         ],
       ),
-      duration: Duration(milliseconds: 500),
-      curve: Curves.easeInOut,
     );
   }
 }

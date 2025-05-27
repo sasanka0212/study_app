@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
-import 'package:study_app/pages/categories.dart';
-import 'package:study_app/pages/home.dart';
+import 'package:study_app/view/admin/manage_categories_screen.dart';
+import 'package:study_app/view/user/pages/categories.dart';
+import 'package:study_app/view/user/pages/home.dart';
 
 class HomeNavigation extends StatelessWidget {
   const HomeNavigation({super.key});
@@ -45,10 +46,8 @@ class NavigationController extends GetxController {
   //set screens according to bottom navigation
   final screens = [
     const Home(),
-    const Categories(),
-    Container(
-      color: Colors.blue,
-    ),
+    Categories(),
     Container(color: Colors.yellow),
+    Container(color: Colors.white,)
   ];
 }

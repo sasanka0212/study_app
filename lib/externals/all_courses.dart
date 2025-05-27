@@ -135,64 +135,64 @@ Map<String, Set<Map<String, Object>>> courseDetails = {
 Map<String, List<Question>> questions = {
   "Operating System": [
     Question(
-      "Which one of the following is not a real time operating system?", 
-      ["VxWorks", "RTLinux", "Windows CE", "MS-DOS"],
-      3,
+      text: "Which one of the following is not a real time operating system?", 
+      options: ["VxWorks", "RTLinux", "Windows CE", "MS-DOS"],
+      correctIndex: 3,
     ),
     Question(
-      "In Unix, which system call creates the new process?", 
-      ["exec()", "fork()", "wait()", "exit()"],
-      1,
+      text: "In Unix, which system call creates the new process?", 
+      options: ["exec()", "fork()", "wait()", "exit()"],
+      correctIndex: 1,
     ),
     Question(
-      "Thread stands for what?", 
-      ["Lightweight process", "Lightweight os", "Heavyweight task", "None of the above"],
-      0,
+      text: "Thread stands for what?", 
+      options: ["Lightweight process", "Lightweight os", "Heavyweight task", "None of the above"],
+      correctIndex: 0,
     ),
     Question(
-      "Which algorithm is defined in Time quantum?", 
-      ["SRTF", "FCFS", "PS", "RR"],
-      3,
+      text: "Which algorithm is defined in Time quantum?", 
+      options: ["SRTF", "FCFS", "PS", "RR"],
+      correctIndex: 3,
     ),
     Question(
-      "Which one of the following can not be scheduled by the kernel?", 
-      ["Kernel-level Thread", "User-level Thread", "Process", "Lightweight process"],
-      1,
+      text: "Which one of the following can not be scheduled by the kernel?", 
+      options: ["Kernel-level Thread", "User-level Thread", "Process", "Lightweight process"],
+      correctIndex: 1,
     ),
   ],
   "Computer Networks": [
     Question(
-      "OSI stands for", 
-      ["Object System Interface", "Object Service Item", "Open System Interface", "None of the above"],
-      2,
+      text: "OSI stands for", 
+      options: ["Object System Interface", "Object Service Item", "Open System Interface", "None of the above"],
+      correctIndex: 2,
     ),
   ],
   "Database Management System": [
     Question(
-      "Which term best define a relation in DBMS ", 
-      ["Table", "Column", "Row", "Index"], 
-      0,
+      text: "Which term best define a relation in DBMS?", 
+      options: ["Table", "Column", "Row", "Index"], 
+      correctIndex: 0,
     ),
   ],
   "Python Basics": [
     Question(
-      "List is type of?", 
-      ["Index", "Variable", "Constant", "Data type"], 
-      3,
+      text: "List is type of?", 
+      options: ["Index", "Variable", "Constant", "Data type"], 
+      correctIndex: 3,
     ),
   ],
   "Machine Learning": [
     Question(
-      "Which neural network deals better with images?", 
-      ["ANN", "RNN", "CNN", "LBPH"], 
-      2,
+      text: "Which neural network deals better with images?", 
+      options: ["ANN", "RNN", "CNN", "LBPH"], 
+      correctIndex: 2,
     ),
   ],
   "System Design": [
     Question(
-      "LLD is best suitable for?", 
-      ["Manufacturing", "Design", "Debugging", "Coding"],
-      1,
+      text: "LLD is best suitable for?", 
+      options: ["Manufacturing", "Design", "Debugging", "Coding"],
+      correctIndex: 1,
     ),
   ],
 };

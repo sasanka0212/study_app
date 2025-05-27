@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:study_app/externals/links.dart';
-import 'package:study_app/menu/home_navigation.dart';
+import 'package:study_app/view/user/menu/home_navigation.dart';
 import 'package:study_app/utils/colors.dart';
-import 'package:study_app/widgets/course_box.dart';
+import 'package:study_app/view/user/widgets/course_box.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -17,6 +18,48 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Text("QuickStudy", 
+          style: GoogleFonts.raleway(
+            fontWeight: FontWeight.bold,
+            color: textPrimaryColor
+          ),
+        ),
+        actions: [
+          Container(
+            decoration: BoxDecoration(
+              color: primaryColor.withOpacity(0.1),
+              border: Border.all(
+                color: primaryColor,
+                width: 2,
+              ),
+              borderRadius: BorderRadius.circular(20),
+            ),
+            padding: EdgeInsets.all(5),
+            child: Icon(
+              Icons.settings,
+              color: primaryColor,
+            ),
+          ),
+          SizedBox(width: 10,),
+          Container(
+            margin: EdgeInsets.only(right: 20),
+            decoration: BoxDecoration(
+              color: primaryColor.withOpacity(0.1),
+              border: Border.all(
+                color: primaryColor,
+                width: 2,
+              ),
+              borderRadius: BorderRadius.circular(20),
+            ),
+            padding: EdgeInsets.all(5),
+            child: Icon(
+              Icons.person,
+              color: primaryColor,
+            ),
+          ),
+        ],
+      ),
       body: SingleChildScrollView(
         child: Container(
           margin: EdgeInsets.only(top: 50, left: 20, right: 30, bottom: 20),
@@ -26,45 +69,8 @@ class _HomeState extends State<Home> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  Container(
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: Colors.black38,
-                      ),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    padding: EdgeInsets.all(5),
-                    child: GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          if (favorite.icon == Icons.favorite_outline) {
-                            favorite = Icon(Icons.favorite_rounded);
-                          } else {
-                            favorite = Icon(Icons.favorite_outline);
-                          }
-                        });
-                      },
-                      child: Icon(
-                        favorite.icon,
-                        color: Colors.blue,
-                      ),
-                    ),
-                  ),
                   SizedBox(
                     width: 10,
-                  ),
-                  Container(
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: Colors.black38,
-                      ),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    padding: EdgeInsets.all(5),
-                    child: Icon(
-                      Icons.person,
-                      color: Colors.blue,
-                    ),
                   ),
                 ],
               ),

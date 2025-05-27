@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:study_app/externals/links.dart';
 import 'package:study_app/utils/colors.dart';
 import 'package:study_app/utils/sizes.dart';
-import 'package:study_app/widgets/category_box_shadow.dart';
-import 'package:study_app/widgets/rounded_container.dart';
+import 'package:study_app/view/user/widgets/category_box_shadow.dart';
+import 'package:study_app/view/user/widgets/rounded_container.dart';
 
 class CategoryCardVertical extends StatelessWidget {
   const CategoryCardVertical({super.key});
