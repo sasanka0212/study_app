@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:study_app/classes/user_data.dart';
+import 'package:study_app/firebase_services/auth.dart';
 import 'package:study_app/utils/colors.dart';
 import 'package:study_app/view/auth/login.dart';
 import 'package:study_app/view/user/menu/home_navigation.dart';
@@ -55,12 +56,12 @@ class _SignUpState extends State<SignUp> {
           password: _password,
         );
         await _firestore.collection('users').doc().set(
-          UserData(
-            id: _firestore.collection('quizzes').doc().id,
-            name: _name, 
-            email: _email,
-          ).toMap(),
-        );
+              UserData(
+                id: _firestore.collection('quizzes').doc().id,
+                name: _name,
+                email: _email,
+              ).toMap(),
+            );
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             backgroundColor: primaryColor,
@@ -317,11 +318,16 @@ class _SignUpState extends State<SignUp> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Image.asset(
-                    "assets/images/google.png",
-                    height: 45,
-                    width: 45,
-                    fit: BoxFit.cover,
+                  GestureDetector(
+                    onTap: () {
+                      AuthMethods().signInWithGoogle(context);
+                    },
+                    child: Image.asset(
+                      "assets/images/google.png",
+                      height: 45,
+                      width: 45,
+                      fit: BoxFit.cover,
+                    ),
                   ),
                 ],
               ),

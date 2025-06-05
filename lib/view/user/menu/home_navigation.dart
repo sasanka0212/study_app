@@ -4,6 +4,7 @@ import 'package:iconsax_flutter/iconsax_flutter.dart';
 import 'package:study_app/view/admin/manage_categories_screen.dart';
 import 'package:study_app/view/user/pages/categories.dart';
 import 'package:study_app/view/user/pages/home.dart';
+import 'package:study_app/view/user/pages/user_profile.dart';
 
 class HomeNavigation extends StatelessWidget {
   const HomeNavigation({super.key});
@@ -29,8 +30,6 @@ class HomeNavigation extends StatelessWidget {
             //second page
             NavigationDestination(
                 icon: Icon(Iconsax.category), label: 'Category'),
-            //third page
-            NavigationDestination(icon: Icon(Iconsax.heart), label: 'Wishlist'),
             //fourth page
             NavigationDestination(icon: Icon(Iconsax.user), label: 'Profile'),
           ],
@@ -47,7 +46,6 @@ class NavigationController extends GetxController {
   final screens = [
     const Home(),
     Categories(),
-    Container(color: Colors.yellow),
-    Container(color: Colors.white,)
+    UserProfile(),
   ];
 }

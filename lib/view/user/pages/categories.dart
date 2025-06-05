@@ -26,41 +26,56 @@ class _CategoriesState extends State<Categories> {
   List<Category> _filteredCategories = [];
   final _searchController = TextEditingController();
   String _userName = "";
+  bool _isLoading = false;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    _fetchCategories();
-    _getUserName();
+    _fetchStats();
   }
 
-  Future<void> _getUserName() async {
-    final email = await FirebaseAuth.instance.currentUser!.email;
-    final userInfo = await FirebaseFirestore.instance
-        .collection('users')
-        .where('email', isEqualTo: email)
-        .get();
-    List<UserData> userData =
-        userInfo.docs.map((e) => UserData.fromMap(e.id, e.data())).toList();
+  Future<void> _fetchStats() async {
     setState(() {
-      _userName = userData.first.name;
+      _isLoading = true;
     });
-  }
-
-  Future<void> _fetchCategories() async {
-    final snapshot = await _firebaseFirestore
-        .collection('categories')
-        .orderBy('createdAt', descending: true)
-        .get();
-    setState(() {
-      _allCategories = snapshot.docs
-          .map((doc) => Category.fromMap(doc.id, doc.data()))
-          .toList();
-      _categoryfilters = ['All'] +
-          _allCategories.map((category) => category.name).toSet().toList();
-      _filteredCategories = _allCategories;
-    });
+    try {
+      final snapshot = await _firebaseFirestore
+          .collection('categories')
+          .orderBy('createdAt', descending: true)
+          .get();
+      final email = await FirebaseAuth.instance.currentUser!.email;
+      final userInfo = await FirebaseFirestore.instance
+          .collection('users')
+          .where('email', isEqualTo: email)
+          .get();
+      List<UserData> userData =
+          userInfo.docs.map((e) => UserData.fromMap(e.id, e.data())).toList();
+      setState(() {
+        _allCategories = snapshot.docs
+            .map((doc) => Category.fromMap(doc.id, doc.data()))
+            .toList();
+        _categoryfilters = ['All'] +
+            _allCategories.map((category) => category.name).toSet().toList();
+        _filteredCategories = _allCategories;
+        _userName = userData.first.name;
+      });
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            "Something went wrong!",
+            style: GoogleFonts.nunito(
+              color: Colors.white,
+            ),
+          ),
+        ),
+      );
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
   }
 
   void _filterCategories(String query, {String? categoryFilter}) {
@@ -78,342 +93,209 @@ class _CategoriesState extends State<Categories> {
     });
   }
 
-  /*
-  @override
-  Widget build(BuildContext context) {
-    final List<Category> categories = [
-      Category(
-        id: 'c1',
-        logo: 'assets/images/design.svg',
-        description: 'Design your thoughts independently',
-        name: 'Design',
-      ),
-      Category(
-        id: 'c2',
-        logo: 'assets/images/marketing.svg',
-        description: 'Show your marketing skills',
-        name: 'Marketing',
-      ),
-      Category(
-        id: 'c3',
-        logo: 'assets/images/engineering.svg',
-        description: 'Convert your idea into implementation',
-        name: 'Engineering',
-      ),
-      Category(
-        id: 'c4',
-        logo: 'assets/images/it.svg',
-        description: 'Skills better then knowledge',
-        name: 'IT',
-      ),
-      Category(
-        id: 'c5',
-        logo: 'assets/images/teaching.svg',
-        description: 'Teach better learn best',
-        name: 'Teaching',
-      ),
-      Category(
-        id: 'c6',
-        logo: 'assets/images/medical.svg',
-        description: 'Know from scratch for your future',
-        name: 'Medical',
-      ),
-    ];
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        elevation: 5.0,
-        title: Text(
-          'Categories',
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 26,
-            color: Color(0xFFF35E7A),
-          ),
-        ),
-        actions: [
-          IconButton(
-            padding: EdgeInsets.only(right: 25),
-            onPressed: () => Navigator.of(context)
-                .push(MaterialPageRoute(builder: (_) => SearchPage())),
-            icon: const Icon(Icons.search),
-          ),
-        ],
-      ),
-      body: Container(
-        height: MediaQuery.of(context).size.height,
-        padding: const EdgeInsets.all(16.0),
-        child: GridView(
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2, // Number of columns
-            crossAxisSpacing: 15.0, // Space between columns
-            mainAxisSpacing: 15.0, // Space between rows
-          ),
-          children: [
-            //const SizedBox(height: 20),
-            // Display each category with spacing
-            ...categories
-                .map((category) => GestureDetector(
-                      onTap: () => Navigator.of(context).push(MaterialPageRoute(
-                        builder: (_) =>
-                            /*McqQuestion(
-                  questionNo: '1', 
-                  question: 'OOPs stands for?', 
-                  optionNo: ['A', 'B', 'C', 'D'], 
-                  options: [
-                    'Object Orientation Programming',
-                    'Object Overview programming',
-                    'Obejct Oriented Programming',
-                    'None of the above',
-                  ],
-                  courseName: category.name.toString(),
-                  ansOption: 'C',
-                )*/
-                            ManageQuizScreen(
-                          category: category,
-                          courses: courseDetails[
-                              category.name.toString().toLowerCase()]!,
-                        ),
-                      )),
-                      child: Material(
-                        elevation: 3,
-                        borderRadius: BorderRadius.circular(10),
-                        child: Container(
-                          height: MediaQuery.of(context).size.height / 3,
-                          width: MediaQuery.of(context).size.width / 2,
-                          padding: const EdgeInsets.all(10),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            color: Colors.white,
-                          ),
-                          child: Column(
-                            children: [
-                              Container(
-                                alignment: Alignment.topLeft,
-                                height: MediaQuery.of(context).size.height / 9,
-                                padding: EdgeInsets.all(30),
-                                child: SvgPicture.asset(
-                                  category.logo.toString(),
-                                ),
-                              ),
-                              Container(
-                                padding: EdgeInsets.symmetric(vertical: 2),
-                                width: MediaQuery.of(context).size.width,
-                                decoration: BoxDecoration(
-                                  color: Color.fromARGB(234, 242, 242, 244),
-                                  borderRadius: BorderRadius.circular(5),
-                                ),
-                                child: Column(children: [
-                                  Text(
-                                    category.name.toString(),
-                                    style: const TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  Text(
-                                    "10 Courses",
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                    ),
-                                  ),
-                                ]),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ))
-                .toList(),
-          ],
-        ),
-      ),
-    );
-  }
-  */
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
     return Scaffold(
       backgroundColor: Colors.white,
-      body: CustomScrollView(
-        slivers: [
-          SliverAppBar(
-            expandedHeight: 225,
-            pinned: true,
-            floating: true,
-            centerTitle: false,
-            backgroundColor: primaryColor,
-            elevation: 0,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.only(
-                bottomLeft: Radius.circular(30),
-                bottomRight: Radius.circular(30),
+      body: _isLoading
+          ? Center(
+              child: CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(primaryColor),
               ),
-            ),
-            title: Text(
-              "QuickStudy",
-              style: GoogleFonts.raleway(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
-            ),
-            flexibleSpace: FlexibleSpaceBar(
-              background: SafeArea(
-                child: Column(
-                  children: [
-                    SizedBox(
-                      height: kToolbarHeight + 16,
+            )
+          : CustomScrollView(
+              physics: BouncingScrollPhysics(),
+              slivers: [
+                SliverAppBar(
+                  expandedHeight: 260,
+                  pinned: true,
+                  floating: true,
+                  centerTitle: false,
+                  backgroundColor: primaryColor,
+                  elevation: 0,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.only(
+                      bottomLeft: Radius.circular(30),
+                      bottomRight: Radius.circular(30),
                     ),
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 16),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "Welcome, $_userName!",
-                            style: GoogleFonts.raleway(
-                              fontSize: 28,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                            ),
-                          ),
-                          SizedBox(
-                            height: 8,
-                          ),
-                          Text(
-                            "Here's all you need for",
-                            style: GoogleFonts.robotoSerif(
-                              fontSize: 16,
-                              color: Colors.white,
-                            ),
-                          ),
-                          SizedBox(
-                            height: 16,
-                          ),
-                          Container(
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(8),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withOpacity(0.1),
-                                  blurRadius: 4,
-                                  offset: Offset(0, 2),
-                                ),
-                              ],
-                            ),
-                            child: TextField(
-                              controller: _searchController,
-                              onChanged: (value) => _filterCategories(value),
-                              decoration: InputDecoration(
-                                hintText: "Search categories...",
-                                hintStyle: GoogleFonts.robotoSerif(
-                                  fontWeight: FontWeight.w500,
-                                ),
-                                prefixIcon: Icon(
-                                  Icons.search,
-                                  color: primaryColor,
-                                ),
-                                suffixIcon: _searchController.text.isNotEmpty
-                                    ? IconButton(
-                                        onPressed: () {
-                                          _searchController.clear();
-                                          _filterCategories('');
-                                        },
-                                        icon: Icon(
-                                          Icons.clear,
-                                          color: primaryColor,
+                  ),
+                  title: Text(
+                    "QuickStudy",
+                    style: GoogleFonts.raleway(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                  flexibleSpace: LayoutBuilder(builder: (context, constraints) {
+                    var top = constraints.biggest.height;
+                    double opacity = (top - kToolbarHeight) / 200;
+                    opacity = opacity.clamp(0.0, 1.0);
+
+                    return FlexibleSpaceBar(
+                      background: Opacity(
+                        opacity: opacity,
+                        child: SafeArea(
+                          child: Column(
+                            children: [
+                              SizedBox(
+                                height: kToolbarHeight + 16,
+                              ),
+                              Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 16),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      "Welcome, $_userName!",
+                                      style: GoogleFonts.raleway(
+                                        fontSize: 28,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      height: 8,
+                                    ),
+                                    Text(
+                                      "Here's all you need for",
+                                      style: GoogleFonts.robotoSerif(
+                                        fontSize: 16,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      height: 16,
+                                    ),
+                                    Container(
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.circular(8),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Colors.black.withOpacity(0.1),
+                                            blurRadius: 4,
+                                            offset: Offset(0, 2),
+                                          ),
+                                        ],
+                                      ),
+                                      child: TextField(
+                                        controller: _searchController,
+                                        onChanged: (value) =>
+                                            _filterCategories(value),
+                                        decoration: InputDecoration(
+                                          hintText: "Search categories...",
+                                          hintStyle: GoogleFonts.robotoSerif(
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                          prefixIcon: Icon(
+                                            Icons.search,
+                                            color: primaryColor,
+                                          ),
+                                          suffixIcon:
+                                              _searchController.text.isNotEmpty
+                                                  ? IconButton(
+                                                      onPressed: () {
+                                                        _searchController.clear();
+                                                        _filterCategories('');
+                                                      },
+                                                      icon: Icon(
+                                                        Icons.clear,
+                                                        color: primaryColor,
+                                                      ),
+                                                    )
+                                                  : null,
+                                          border: InputBorder.none,
+                                          contentPadding: EdgeInsets.symmetric(
+                                            horizontal: 16,
+                                            vertical: 12,
+                                          ),
                                         ),
-                                      )
-                                    : null,
-                                border: InputBorder.none,
-                                contentPadding: EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                  vertical: 12,
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
-                            ),
+                            ],
                           ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              collapseMode: CollapseMode.pin,
-            ),
-          ),
-          SliverToBoxAdapter(
-            child: Container(
-              margin: EdgeInsets.all(16),
-              height: 40,
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: _categoryfilters.length,
-                itemBuilder: (context, index) {
-                  final filter = _categoryfilters[index];
-                  return Padding(
-                    padding: EdgeInsets.only(right: 8),
-                    child: ChoiceChip(
-                      label: Text(
-                        filter,
-                        style: GoogleFonts.raleway(
-                          color: _seletecdFilter == filter
-                              ? Colors.white
-                              : textPrimaryColor,
                         ),
                       ),
-                      selected: _seletecdFilter == filter,
-                      selectedColor: primaryColor,
-                      backgroundColor: Colors.white,
-                      onSelected: (value) {
-                        setState(() {
-                          _seletecdFilter = filter;
-                        });
-                        _filterCategories(
-                          _searchController.text,
-                          categoryFilter: filter,
+                      collapseMode: CollapseMode.pin,
+                    );
+                  }),
+                ),
+                SliverToBoxAdapter(
+                  child: Container(
+                    margin: EdgeInsets.all(16),
+                    height: 40,
+                    child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: _categoryfilters.length,
+                      itemBuilder: (context, index) {
+                        final filter = _categoryfilters[index];
+                        return Padding(
+                          padding: EdgeInsets.only(right: 8),
+                          child: ChoiceChip(
+                            label: Text(
+                              filter,
+                              style: GoogleFonts.raleway(
+                                color: _seletecdFilter == filter
+                                    ? Colors.white
+                                    : textPrimaryColor,
+                              ),
+                            ),
+                            selected: _seletecdFilter == filter,
+                            selectedColor: primaryColor,
+                            backgroundColor: Colors.white,
+                            checkmarkColor: Colors.white,
+                            onSelected: (value) {
+                              setState(() {
+                                _seletecdFilter = filter;
+                              });
+                              _filterCategories(
+                                _searchController.text,
+                                categoryFilter: filter,
+                              );
+                            },
+                          ),
                         );
                       },
                     ),
-                  );
-                },
-              ),
-            ),
-          ),
-          SliverPadding(
-            padding: EdgeInsets.all(16),
-            sliver: _filteredCategories.isEmpty
-                ? SliverToBoxAdapter(
-                    child: Center(
-                      child: Text(
-                        "No categories found",
-                        style: TextStyle(
-                          color: textSecondaryColor,
-                        ),
-                      ),
-                    ),
-                  )
-                : SliverGrid(
-                    delegate: SliverChildBuilderDelegate(
-                      (context, index) => _buildCategoryCard(
-                        _filteredCategories[index],
-                        index,
-                      ),
-                      childCount: _filteredCategories.length,
-                    ),
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      mainAxisSpacing: 16,
-                      crossAxisSpacing: 16,
-                      childAspectRatio: 0.8,
-                    ),
                   ),
-          ),
-        ],
-      ),
+                ),
+                SliverPadding(
+                  padding: EdgeInsets.all(16),
+                  sliver: _filteredCategories.isEmpty
+                      ? SliverToBoxAdapter(
+                          child: Center(
+                            child: Text(
+                              "No categories found",
+                              style: TextStyle(
+                                color: textSecondaryColor,
+                              ),
+                            ),
+                          ),
+                        )
+                      : SliverGrid(
+                          delegate: SliverChildBuilderDelegate(
+                            (context, index) => _buildCategoryCard(
+                              _filteredCategories[index],
+                              index,
+                            ),
+                            childCount: _filteredCategories.length,
+                          ),
+                          gridDelegate:
+                              SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2,
+                            mainAxisSpacing: 16,
+                            crossAxisSpacing: 16,
+                            childAspectRatio: 0.8,
+                          ),
+                        ),
+                ),
+              ],
+            ),
     );
   }
 

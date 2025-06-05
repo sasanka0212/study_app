@@ -61,6 +61,7 @@ class _HomeState extends State<Home> {
         ],
       ),
       body: SingleChildScrollView(
+        physics: BouncingScrollPhysics(),
         child: Container(
           margin: EdgeInsets.only(top: 50, left: 20, right: 30, bottom: 20),
           child: Column(

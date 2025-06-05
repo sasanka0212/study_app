@@ -132,7 +132,8 @@ class _ManageQuizzesScreenState extends State<ManageQuizzesScreen> {
                   context,
                   MaterialPageRoute(
                       builder: (context) => AddQuizScreen(
-                            categoryId: widget.categoryId,
+                            categoryId:
+                                _selectedCategoryId ?? widget.categoryId,
                             categoryName: widget.categoryName,
                           )));
             },

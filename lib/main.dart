@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:study_app/firebase_services/firebase_options.dart';
+import 'package:study_app/splash_screen.dart';
 import 'package:study_app/view/auth/login.dart';
 import 'package:study_app/view/auth/sign_up.dart';
 import 'package:study_app/view/user/menu/home_navigation.dart';
@@ -30,7 +31,7 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
         scaffoldBackgroundColor: Colors.white,
       ),
-      home: LogIn(),
+      home: SplashScreen(),
     );
   }
 }

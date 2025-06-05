@@ -11,6 +11,14 @@ class Question {
     required this.correctIndex,
   });
 
+  factory Question.fromJson(Map<String, dynamic> json) {
+    return Question(
+      text: json['text'],
+      options: List<String>.from(json['options']),
+      correctIndex: json['correctIndex'],
+    );
+  }
+
   factory Question.fromMap(Map<String, dynamic> data) {
     return Question(
       text: data['text'] ?? "",
@@ -29,7 +37,7 @@ class Question {
 
   Question copyWith({String? text, List<String>? options, int? correctIndex}) {
     return Question(
-      text: text ?? this.text,  //?? -> otherwise
+      text: text ?? this.text, //?? -> otherwise
       options: options ?? this.options,
       correctIndex: correctIndex ?? this.correctIndex,
     );

@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:study_app/firebase_services/auth.dart';
 import 'package:study_app/firebase_services/forgot_password.dart';
 import 'package:study_app/utils/colors.dart';
 import 'package:study_app/view/auth/sign_up.dart';
@@ -39,11 +40,11 @@ class _LogInState extends State<LogIn> {
   }
 
   userLogin() async {
-    setState(() {
-      _isLoading = true;
-    });
     //we already use validator for the textformfield, no need to use check ins for these textformfields
     if (_emailController.text != "" && _passwordController.text != "") {
+      setState(() {
+        _isLoading = true;
+      });
       try {
         await FirebaseAuth.instance.signInWithEmailAndPassword(
           email: _email,
@@ -118,12 +119,11 @@ class _LogInState extends State<LogIn> {
           );
         }
         */
-      } 
-      finally {
+      } finally {
         setState(() {
           _isLoading = false;
         });
-      } 
+      }
     }
   }
 
@@ -223,21 +223,22 @@ class _LogInState extends State<LogIn> {
                                 color: primaryColor,
                                 borderRadius: BorderRadius.circular(30)),
                             child: Center(
-                                child: _isLoading ? 
-                                CircularProgressIndicator(
-                                  valueColor: AlwaysStoppedAnimation<Color>(
-                                    Colors.white,
-                                  ),
-                                  strokeWidth: 5,
-                                ) :
-                                Text(
-                                "Sign In",
-                                style: GoogleFonts.raleway(
-                                  color: Colors.white,
-                                  fontSize: 22.0,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                            ))),
+                                child: _isLoading
+                                    ? CircularProgressIndicator(
+                                        valueColor:
+                                            AlwaysStoppedAnimation<Color>(
+                                          Colors.white,
+                                        ),
+                                        strokeWidth: 5,
+                                      )
+                                    : Text(
+                                        "Sign In",
+                                        style: GoogleFonts.raleway(
+                                          color: Colors.white,
+                                          fontSize: 22.0,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ))),
                       ),
                     ],
                   ),
@@ -277,7 +278,7 @@ class _LogInState extends State<LogIn> {
                 children: [
                   GestureDetector(
                     onTap: () {
-                      //AuthMethods().signInWithGoogle(context);
+                      AuthMethods().signInWithGoogle(context);
                     },
                     child: Image.asset(
                       "assets/images/google.png",
