@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:study_app/classes/user_data.dart';
 import 'package:study_app/firebase_services/database_methods.dart';
 import 'package:study_app/view/auth/login.dart';
@@ -40,6 +41,9 @@ class AuthMethods {
         id: user.uid,
       ).toMap();
       await DatabaseMethods().addUser(user.uid, userData);
+      final SharedPreferences pref = await SharedPreferences.getInstance();
+      pref.setString(
+          'username', user.displayName!);
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(

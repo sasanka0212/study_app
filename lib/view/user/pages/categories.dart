@@ -2,13 +2,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:study_app/classes/category.dart';
 import 'package:study_app/classes/user_data.dart';
-import 'package:study_app/externals/all_courses.dart';
 import 'package:study_app/view/user/pages/manage_quiz_screen.dart';
-import 'package:study_app/view/user/pages/search_page.dart';
 import 'package:study_app/utils/colors.dart';
 
 class Categories extends StatefulWidget {
@@ -27,12 +25,25 @@ class _CategoriesState extends State<Categories> {
   final _searchController = TextEditingController();
   String _userName = "";
   bool _isLoading = false;
+  final ScrollController _scrollController = ScrollController();
+  double _opacity = 1.0;
+  final double expandedHeight = 200;
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _fetchStats();
+    _scrollController.addListener(() {
+      setState(() {
+        _opacity = _scrollController.offset <= 1 ? 1.0 : 0.0;
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
   }
 
   Future<void> _fetchStats() async {
@@ -44,13 +55,14 @@ class _CategoriesState extends State<Categories> {
           .collection('categories')
           .orderBy('createdAt', descending: true)
           .get();
-      final email = await FirebaseAuth.instance.currentUser!.email;
-      final userInfo = await FirebaseFirestore.instance
-          .collection('users')
-          .where('email', isEqualTo: email)
-          .get();
-      List<UserData> userData =
-          userInfo.docs.map((e) => UserData.fromMap(e.id, e.data())).toList();
+      final SharedPreferences pref = await SharedPreferences.getInstance();
+      //final email = await FirebaseAuth.instance.currentUser!.email;
+      //final userInfo = await FirebaseFirestore.instance
+      //.collection('users')
+      //.where('email', isEqualTo: email)
+      //.get();
+      //List<UserData> userData =
+      //userInfo.docs.map((e) => UserData.fromMap(e.id, e.data())).toList();
       setState(() {
         _allCategories = snapshot.docs
             .map((doc) => Category.fromMap(doc.id, doc.data()))
@@ -58,7 +70,7 @@ class _CategoriesState extends State<Categories> {
         _categoryfilters = ['All'] +
             _allCategories.map((category) => category.name).toSet().toList();
         _filteredCategories = _allCategories;
-        _userName = userData.first.name;
+        _userName = pref.getString('username')!;
       });
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -95,13 +107,37 @@ class _CategoriesState extends State<Categories> {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     return Scaffold(
       backgroundColor: Colors.white,
       body: _isLoading
           ? Center(
-              child: CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(primaryColor),
+              child: Container(
+                width: 180,
+                padding: EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: primaryColor.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    CircularProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation<Color>(primaryColor),
+                      strokeWidth: 3,
+                    ),
+                    SizedBox(
+                      width: 10,
+                    ),
+                    Text(
+                      "Loading",
+                      style: GoogleFonts.nunito(
+                        color: primaryColor,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             )
           : CustomScrollView(
@@ -109,8 +145,6 @@ class _CategoriesState extends State<Categories> {
               slivers: [
                 SliverAppBar(
                   expandedHeight: 260,
-                  pinned: true,
-                  floating: true,
                   centerTitle: false,
                   backgroundColor: primaryColor,
                   elevation: 0,
@@ -132,7 +166,6 @@ class _CategoriesState extends State<Categories> {
                     var top = constraints.biggest.height;
                     double opacity = (top - kToolbarHeight) / 200;
                     opacity = opacity.clamp(0.0, 1.0);
-
                     return FlexibleSpaceBar(
                       background: Opacity(
                         opacity: opacity,
@@ -174,7 +207,8 @@ class _CategoriesState extends State<Categories> {
                                         borderRadius: BorderRadius.circular(8),
                                         boxShadow: [
                                           BoxShadow(
-                                            color: Colors.black.withOpacity(0.1),
+                                            color:
+                                                Colors.black.withOpacity(0.1),
                                             blurRadius: 4,
                                             offset: Offset(0, 2),
                                           ),
@@ -193,19 +227,19 @@ class _CategoriesState extends State<Categories> {
                                             Icons.search,
                                             color: primaryColor,
                                           ),
-                                          suffixIcon:
-                                              _searchController.text.isNotEmpty
-                                                  ? IconButton(
-                                                      onPressed: () {
-                                                        _searchController.clear();
-                                                        _filterCategories('');
-                                                      },
-                                                      icon: Icon(
-                                                        Icons.clear,
-                                                        color: primaryColor,
-                                                      ),
-                                                    )
-                                                  : null,
+                                          suffixIcon: _searchController
+                                                  .text.isNotEmpty
+                                              ? IconButton(
+                                                  onPressed: () {
+                                                    _searchController.clear();
+                                                    _filterCategories('');
+                                                  },
+                                                  icon: Icon(
+                                                    Icons.clear,
+                                                    color: primaryColor,
+                                                  ),
+                                                )
+                                              : null,
                                           border: InputBorder.none,
                                           contentPadding: EdgeInsets.symmetric(
                                             horizontal: 16,

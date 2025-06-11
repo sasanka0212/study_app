@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:iconsax_flutter/iconsax_flutter.dart';
 import 'package:study_app/classes/category.dart';
 import 'package:study_app/classes/quiz.dart';
 import 'package:study_app/externals/all_courses.dart';
@@ -24,6 +25,8 @@ class _ManageQuizScreenState extends State<ManageQuizScreen> {
   String _selectedCourseId = "";
   List<Quiz> _quizzes = [];
   bool _isLoading = true;
+  bool _isSave = false;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   @override
   void initState() {
@@ -130,6 +133,21 @@ class _ManageQuizScreenState extends State<ManageQuizScreen> {
                           icon: Icon(Icons.arrow_back_ios),
                         ),
                       ),
+                      actions: [
+                        Padding(
+                          padding: const EdgeInsets.only(right: 10),
+                          child: IconButton(
+                            onPressed: () {
+                              setState(() {
+                                _isSave = !_isSave;
+                              });
+                            },
+                            icon: Icon(_isSave
+                                ? Iconsax.save_add
+                                : Iconsax.save_add_copy),
+                          ),
+                        ),
+                      ],
                       foregroundColor: Colors.white,
                       backgroundColor: Color.fromARGB(225, 97, 113, 234),
                       expandedHeight: 200,
@@ -178,7 +196,7 @@ class _ManageQuizScreenState extends State<ManageQuizScreen> {
                         padding: const EdgeInsets.symmetric(horizontal: 16),
                         child: ListView.builder(
                           shrinkWrap: true,
-                          physics: NeverScrollableScrollPhysics(),
+                          physics: const NeverScrollableScrollPhysics(),
                           itemCount: _quizzes.length,
                           itemBuilder: (context, index) {
                             final quiz = _quizzes[index];
@@ -197,6 +215,7 @@ class _ManageQuizScreenState extends State<ManageQuizScreen> {
       child: Card(
         margin: const EdgeInsets.only(bottom: 16),
         elevation: 4,
+        shadowColor: Colors.black26,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(26),
         ),

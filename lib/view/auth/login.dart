@@ -2,6 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:study_app/classes/user_data.dart';
 import 'package:study_app/firebase_services/auth.dart';
 import 'package:study_app/firebase_services/forgot_password.dart';
 import 'package:study_app/utils/colors.dart';
@@ -50,6 +52,16 @@ class _LogInState extends State<LogIn> {
           email: _email,
           password: _password,
         );
+        final email = await FirebaseAuth.instance.currentUser!.email;
+        final userInfo = await FirebaseFirestore.instance
+          .collection('users')
+          .where('email', isEqualTo: email)
+          .get();
+        List<UserData> userData =
+          userInfo.docs.map((e) => UserData.fromMap(e.id, e.data())).toList();
+        final SharedPreferences pref = await SharedPreferences.getInstance();
+        pref.setString(
+            'username', userData.first.name);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             backgroundColor: primaryColor,

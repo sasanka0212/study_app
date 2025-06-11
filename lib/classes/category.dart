@@ -1,19 +1,9 @@
-import 'package:flutter/material.dart';
-import 'package:study_app/view/user/pages/categories.dart';
-
 class Category {
   final String id;
   final String name;
   final String description;
   final String logo;
   final DateTime? createdAt;
-
-  //String? name;
-  //String? logo;
-  //String? courses;
-  //String? desc;
-
-  //Category(this.name, this.logo, this.courses, this.desc);
 
   Category({
     required this.id,

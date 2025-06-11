@@ -8,6 +8,7 @@ class CourseBox extends StatelessWidget {
   final String imageUrl;
   final LinearGradient gradientColor;
   final Icon state;
+  final VoidCallback onPressed;
   const CourseBox({
     super.key,
     required this.lvl,
@@ -15,6 +16,7 @@ class CourseBox extends StatelessWidget {
     required this.imageUrl,
     required this.gradientColor,
     required this.state,
+    required this.onPressed,
   });
 
   @override
@@ -42,27 +44,22 @@ class CourseBox extends StatelessWidget {
                   ),
                   Container(
                     padding: EdgeInsets.all(5),
+                    height: 50,
+                    width: 50,
                     decoration: BoxDecoration(
                       border: Border.all(
                         color: Colors.white54,
                       ),
-                      borderRadius: BorderRadius.circular(10),
+                      borderRadius: BorderRadius.circular(50),
                     ),
-                    child: Icon(
-                      state.icon,
+                    child: IconButton(
+                      onPressed: onPressed,
+                      icon: state,
                       color: Colors.white,
                     ),
                   ),
                   SizedBox(
                     height: 10,
-                  ),
-                  Text(
-                    lvl,
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: const Color.fromARGB(242, 249, 247, 247),
-                    ),
                   ),
                   Text(
                     title,
@@ -71,6 +68,15 @@ class CourseBox extends StatelessWidget {
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
                     ),
+                  ),
+                  Text(
+                    lvl,
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                      color: const Color.fromARGB(242, 249, 247, 247),
+                    ),
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ],
               ),
@@ -89,8 +95,8 @@ class CourseBox extends StatelessWidget {
                   padding: EdgeInsets.all(10),
                   child: Image.network(
                     imageUrl,
-                    height: 60,
-                    width: 60,
+                    height: 45,
+                    width: 45,
                     fit: BoxFit.cover,
                   ),
                 ),

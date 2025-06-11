@@ -57,7 +57,7 @@ class _SignUpState extends State<SignUp> {
         );
         await _firestore.collection('users').doc().set(
               UserData(
-                id: _firestore.collection('quizzes').doc().id,
+                id: _firestore.collection('users').doc().id,
                 name: _name,
                 email: _email,
               ).toMap(),

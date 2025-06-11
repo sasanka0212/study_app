@@ -7,7 +7,9 @@ import 'package:study_app/view/user/pages/home.dart';
 import 'package:study_app/view/user/pages/user_profile.dart';
 
 class HomeNavigation extends StatelessWidget {
-  const HomeNavigation({super.key});
+  const HomeNavigation({
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
