@@ -11,10 +11,7 @@ import 'package:study_app/utils/colors.dart';
 
 class ManageQuizScreen extends StatefulWidget {
   final Category category;
-  const ManageQuizScreen({
-    super.key,
-    required this.category,
-  });
+  const ManageQuizScreen({super.key, required this.category});
 
   @override
   State<ManageQuizScreen> createState() => _ManageQuizScreenState();
@@ -36,29 +33,48 @@ class _ManageQuizScreenState extends State<ManageQuizScreen> {
     _fetchQuizzes();
   }
 
+  Future<bool> _isPurchased(String cid) async {
+    final user = await _firestore.collection('users').doc(_userid).get();
+    if (user.exists && user.data() != null) {
+      List<String> cids = user.data()!['cid'] ?? [];
+      for (String id in cids) {
+        if (id == cid) {
+          return true;
+        }
+      }
+      return false;
+    }
+    return false;
+  }
+
   Future<void> _fetchQuizzes() async {
     try {
       final snapShot = await FirebaseFirestore.instance
           .collection('quizzes')
           .where('categoryId', isEqualTo: widget.category.id)
           .get();
+      //_isSave = await _isPurchased(widget.category.id);
       setState(() {
-        _quizzes =
-            snapShot.docs.map((e) => Quiz.fromMap(e.id, e.data())).toList();
+        _quizzes = snapShot.docs
+            .map((e) => Quiz.fromMap(e.id, e.data()))
+            .toList();
         _isLoading = false;
       });
     } catch (e) {
       setState(() {
         _isLoading = false;
       });
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Failed to load quizzes")),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text("Failed to load quizzes")));
     }
   }
 
   Future<void> _updateItemToList(
-      String userId, String itemId, bool isSave) async {
+    String userId,
+    String itemId,
+    bool isSave,
+  ) async {
     try {
       final docRef = _firestore.collection('users').doc(userId);
       if (isSave) {
@@ -74,7 +90,11 @@ class _ManageQuizScreenState extends State<ManageQuizScreen> {
   }
 
   Widget _buildStatCard(
-      String title, String value, IconData icon, Color color) {
+    String title,
+    String value,
+    IconData icon,
+    Color color,
+  ) {
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(20),
@@ -87,11 +107,7 @@ class _ManageQuizScreenState extends State<ManageQuizScreen> {
                 borderRadius: BorderRadius.circular(12),
                 color: color.withOpacity(0.1),
               ),
-              child: Icon(
-                icon,
-                color: color,
-                size: 25,
-              ),
+              child: Icon(icon, color: color, size: 25),
             ),
           ],
         ),
@@ -109,282 +125,253 @@ class _ManageQuizScreenState extends State<ManageQuizScreen> {
               ),
             )
           : _quizzes.isEmpty
-              ? Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Icon(
-                        Icons.quiz_outlined,
-                        size: 64,
-                        color: Color.fromARGB(144, 174, 174, 193),
-                      ),
-                      const SizedBox(
-                        height: 16,
-                      ),
-                      const Text(
-                        "No quizzes are available in this category",
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: Color.fromARGB(144, 174, 174, 193),
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 16,
-                      ),
-                      ElevatedButton(
-                        onPressed: () => Navigator.pop(context),
-                        child: const Text(
-                          "Go back",
-                        ),
-                      ),
-                    ],
+          ? Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(
+                    Icons.quiz_outlined,
+                    size: 64,
+                    color: Color.fromARGB(144, 174, 174, 193),
                   ),
-                )
-              : CustomScrollView(
-                  slivers: [
-                    SliverAppBar(
-                      leading: Padding(
-                        padding: const EdgeInsets.only(left: 10),
-                        child: IconButton(
-                          onPressed: () => Navigator.pop(context),
-                          icon: const Icon(Icons.arrow_back_ios),
-                        ),
-                      ),
-                      actions: [
-                        GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              _isSave = !_isSave;
-                            });
-                            _updateItemToList(
-                                _userid, widget.category.id, _isSave);
-                          },
-                          child: Container(
-                            margin: const EdgeInsets.only(right: 10),
-                            padding: const EdgeInsets.all(10),
-                            decoration: BoxDecoration(
-                              color: primaryColor.withValues(alpha: 1),
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(
-                                  _isSave ? "Remove from cart" : "Add to cart",
-                                  style: GoogleFonts.nunito(
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                                const SizedBox(
-                                  width: 5,
-                                ),
-                                Icon(
-                                  _isSave
-                                      ? Iconsax.shopping_cart
-                                      : Iconsax.shopping_cart_copy,
-                                  size: 16,
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
-                      foregroundColor: Colors.white,
-                      backgroundColor: const Color.fromARGB(225, 97, 113, 234),
-                      expandedHeight: 200,
-                      floating: false,
-                      pinned: true,
-                      flexibleSpace: FlexibleSpaceBar(
-                        centerTitle: true,
-                        title: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(
-                            widget.category.description,
-                            textAlign: TextAlign.center,
-                            overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
-                              fontSize: 12,
-                              color: Colors.white70,
-                            ),
-                          ),
-                        ),
-                        background: Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              const Icon(
-                                Icons.category_rounded,
-                                size: 64,
-                                color: Colors.white,
-                              ),
-                              const SizedBox(
-                                height: 16,
-                              ),
-                              Text(
-                                widget.category.name,
-                                style: const TextStyle(
-                                  fontSize: 24,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
+                  const SizedBox(height: 16),
+                  const Text(
+                    "No quizzes are available in this category",
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Color.fromARGB(144, 174, 174, 193),
                     ),
-                    SliverToBoxAdapter(
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        child: ListView.builder(
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          itemCount: _quizzes.length,
-                          itemBuilder: (context, index) {
-                            final quiz = _quizzes[index];
-                            return _buildQuizCard(quiz, index);
-                          },
+                  ),
+                  const SizedBox(height: 16),
+                  ElevatedButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: const Text("Go back"),
+                  ),
+                ],
+              ),
+            )
+          : CustomScrollView(
+              slivers: [
+                SliverAppBar(
+                  leading: Padding(
+                    padding: const EdgeInsets.only(left: 10),
+                    child: IconButton(
+                      onPressed: () => Navigator.pop(context),
+                      icon: const Icon(Icons.arrow_back_ios),
+                    ),
+                  ),
+                  actions: [
+                    GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          _isSave = !_isSave;
+                        });
+                        _updateItemToList(_userid, widget.category.id, _isSave);
+                      },
+                      child: Container(
+                        margin: const EdgeInsets.only(right: 10),
+                        padding: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          color: primaryColor.withValues(alpha: 1),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              _isSave ? "Remove from cart" : "Add to cart",
+                              style: GoogleFonts.nunito(
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            const SizedBox(width: 5),
+                            Icon(
+                              _isSave
+                                  ? Iconsax.shopping_cart
+                                  : Iconsax.shopping_cart_copy,
+                              size: 16,
+                            ),
+                          ],
                         ),
                       ),
                     ),
                   ],
+                  foregroundColor: Colors.white,
+                  backgroundColor: const Color.fromARGB(225, 97, 113, 234),
+                  expandedHeight: 200,
+                  floating: false,
+                  pinned: true,
+                  flexibleSpace: FlexibleSpaceBar(
+                    centerTitle: true,
+                    title: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        widget.category.description,
+                        textAlign: TextAlign.center,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          fontSize: 12,
+                          color: Colors.white70,
+                        ),
+                      ),
+                    ),
+                    background: Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(
+                            Icons.category_rounded,
+                            size: 64,
+                            color: Colors.white,
+                          ),
+                          const SizedBox(height: 16),
+                          Text(
+                            widget.category.name,
+                            style: const TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
                 ),
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: ListView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: _quizzes.length,
+                      itemBuilder: (context, index) {
+                        final quiz = _quizzes[index];
+                        return _buildQuizCard(quiz, index);
+                      },
+                    ),
+                  ),
+                ),
+              ],
+            ),
     );
   }
 
   Widget _buildQuizCard(Quiz quiz, int index) {
     return Animate(
-      child: Card(
-        margin: const EdgeInsets.only(bottom: 16),
-        elevation: 4,
-        shadowColor: Colors.black26,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(26),
-        ),
-        child: InkWell(
-          onTap: () async {
-            final isEnter = await showDialog<bool>(
-              context: context,
-              builder: (context) => AlertDialog(
-                title: Text(
-                  "Start Quiz",
-                  style: GoogleFonts.raleway(
-                    color: Colors.greenAccent,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                content: const Text(
-                  "Do you want to start the quiz?",
-                  style: TextStyle(
-                    fontSize: 16,
-                  ),
-                ),
-                icon: const Icon(
-                  Icons.start_outlined,
-                  color: primaryColor,
-                ),
-                actions: [
-                  TextButton(
-                    onPressed: () => Navigator.pop(context, false),
-                    child: const Text("Cancel"),
-                  ),
-                  TextButton(
-                    onPressed: () => Navigator.pop(context, true),
-                    child: const Text(
-                      "Start",
-                      style: TextStyle(
+          child: Card(
+            margin: const EdgeInsets.only(bottom: 16),
+            elevation: 4,
+            shadowColor: Colors.black26,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(26),
+            ),
+            child: InkWell(
+              onTap: () async {
+                final isEnter = await showDialog<bool>(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    title: Text(
+                      "Start Quiz",
+                      style: GoogleFonts.raleway(
                         color: Colors.greenAccent,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                  ),
-                ],
-              ),
-            );
-            if (isEnter == true) {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (builder) => QuizPlayScreen(quiz: quiz)));
-            }
-          },
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Row(
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: primaryColor.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: const Icon(
-                    Icons.quiz_rounded,
-                    color: primaryColor,
-                    size: 32,
-                  ),
-                ),
-                const SizedBox(
-                  width: 16,
-                ),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        quiz.title,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 18,
-                          color: Colors.black,
+                    content: const Text(
+                      "Do you want to start the quiz?",
+                      style: TextStyle(fontSize: 16),
+                    ),
+                    icon: const Icon(Icons.start_outlined, color: primaryColor),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(context, false),
+                        child: const Text("Cancel"),
+                      ),
+                      TextButton(
+                        onPressed: () => Navigator.pop(context, true),
+                        child: const Text(
+                          "Start",
+                          style: TextStyle(
+                            color: Colors.greenAccent,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
-                      Column(
+                    ],
+                  ),
+                );
+                if (isEnter == true) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (builder) => QuizPlayScreen(quiz: quiz),
+                    ),
+                  );
+                }
+              },
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: primaryColor.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: const Icon(
+                        Icons.quiz_rounded,
+                        color: primaryColor,
+                        size: 32,
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const SizedBox(
-                            height: 8,
+                          Text(
+                            quiz.title,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 18,
+                              color: Colors.black,
+                            ),
                           ),
-                          Row(
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const Icon(
-                                Icons.question_answer_outlined,
-                                size: 16,
-                              ),
-                              const SizedBox(
-                                width: 4,
-                              ),
-                              Text(
-                                "${quiz.questions.length} Questions",
-                              ),
-                              const SizedBox(
-                                width: 16,
-                              ),
-                              const Icon(
-                                Icons.timer_outlined,
-                                size: 16,
-                              ),
-                              Text(
-                                "${quiz.timeLimit} mins",
+                              const SizedBox(height: 8),
+                              Row(
+                                children: [
+                                  const Icon(
+                                    Icons.question_answer_outlined,
+                                    size: 16,
+                                  ),
+                                  const SizedBox(width: 4),
+                                  Text("${quiz.questions.length} Questions"),
+                                  const SizedBox(width: 16),
+                                  const Icon(Icons.timer_outlined, size: 16),
+                                  Text("${quiz.timeLimit} mins"),
+                                ],
                               ),
                             ],
                           ),
                         ],
                       ),
-                    ],
-                  ),
+                    ),
+                    const Icon(
+                      Icons.chevron_right_rounded,
+                      size: 30,
+                      color: primaryColor,
+                    ),
+                  ],
                 ),
-                const Icon(
-                  Icons.chevron_right_rounded,
-                  size: 30,
-                  color: primaryColor,
-                ),
-              ],
+              ),
             ),
           ),
-        ),
-      ),
-    )
+        )
         .animate(delay: Duration(milliseconds: 100 * index))
         .slideX(begin: 0.5, end: 0, duration: const Duration(milliseconds: 300))
         .fadeIn();

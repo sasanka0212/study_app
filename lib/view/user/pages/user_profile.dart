@@ -28,7 +28,7 @@ class _UserProfileState extends State<UserProfile> {
   void _operate(int index) {
     switch(index) {
       case 3:
-        Navigator.push(context, MaterialPageRoute(builder: (context) => UserCart()));
+        Navigator.push(context, MaterialPageRoute(builder: (context) => UserCart(uid: FirebaseAuth.instance.currentUser!.uid),),);
       case 4:
         AuthMethods().signOff(context);
       default:

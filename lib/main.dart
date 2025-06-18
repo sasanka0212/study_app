@@ -2,7 +2,6 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:study_app/firebase_services/firebase_options.dart';
 import 'package:study_app/splash_screen.dart';
-import 'package:study_app/view/admin/admin_home_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
