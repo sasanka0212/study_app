@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "738251653132",
+    "project_id": "quickstudy-9deb2",
+    "storage_bucket": "quickstudy-9deb2.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:738251653132:android:c214151dc88c7cd9dfee29",
+        "android_client_info": {
+          "package_name": "com.example.study_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "738251653132-e7akaqreg11mhajeh4ir2demb8g2inqh.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.study_app",
+            "certificate_hash": "9d824ad31a3853ed55d3c838fdfd3a2a470ed8fe"
+          }
+        },
+        {
+          "client_id": "738251653132-l3ekus8tr5033ni8c5onll4ql4mglacs.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCZMKEO7wI61m1lL1V-5Jpx2GgPtjUydmI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "738251653132-l3ekus8tr5033ni8c5onll4ql4mglacs.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "738251653132-030fi1219uio000gs06pu9nnpvvd2f24.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.studyApp"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
