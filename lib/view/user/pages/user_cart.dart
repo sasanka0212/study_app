@@ -1,9 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:study_app/classes/category.dart';
-import 'package:study_app/classes/user_data.dart';
 import 'package:study_app/utils/colors.dart';
 import 'package:study_app/view/user/widgets/cart_box.dart';
 
@@ -23,7 +21,6 @@ class _UserCartState extends State<UserCart> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _fetchStats();
   }
