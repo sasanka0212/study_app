@@ -1,6 +1,7 @@
 {
     "java.configuration.updateBuildConfiguration": "interactive",
-    "files.autoSave": "afterDelay",
-    "dart.flutterHotReloadOnSave": "allIfDirty",
-    "cmake.sourceDirectory": "C:/Users/User/FlutterProjects/study_app/linux",
+    //"files.autoSave": "afterDelay",
+    //"dart.flutterHotReloadOnSave": "manual",
+    //"cmake.sourceDirectory": "C:/Users/User/FlutterProjects/study_app/linux",
+    //"dart.previewHotReloadOnSaveWatcher": true,
 }

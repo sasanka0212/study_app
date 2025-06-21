@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:study_app/classes/category.dart';
 import 'package:study_app/classes/quiz.dart';
 import 'package:study_app/view/user/pages/quiz_play_screen.dart';
@@ -34,7 +35,7 @@ class _ManageQuizScreenState extends State<ManageQuizScreen> {
   }
 
   Future<bool> _isPurchased(String cid) async {
-    final user = await _firestore.collection('users').doc(_userid).get();
+    final user = await _firestore.collection('user_data').doc(_userid).get();
     if (user.exists && user.data() != null) {
       List<String> cids = user.data()!['cid'] ?? [];
       for (String id in cids) {
@@ -76,7 +77,7 @@ class _ManageQuizScreenState extends State<ManageQuizScreen> {
     bool isSave,
   ) async {
     try {
-      final docRef = _firestore.collection('users').doc(userId);
+      final docRef = _firestore.collection('user_data').doc(userId);
       if (isSave) {
         await docRef.update({
           'cid': FieldValue.arrayUnion([itemId]),

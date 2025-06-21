@@ -27,7 +27,7 @@ class _UserCartState extends State<UserCart> {
 
   Future<List<String>> fetchCids(String userId) async {
     DocumentSnapshot<Map<String, dynamic>> doc = await _firestore
-        .collection('users')
+        .collection('user_data')
         .doc(userId)
         .get();
     if (doc.exists && doc.data() != null) {

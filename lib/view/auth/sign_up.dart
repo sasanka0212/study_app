@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:study_app/classes/user_data.dart';
+import 'package:study_app/classes/user_properties.dart';
 import 'package:study_app/firebase_services/auth.dart';
 import 'package:study_app/utils/colors.dart';
 import 'package:study_app/view/auth/login.dart';
@@ -42,49 +43,38 @@ class _SignUpState extends State<SignUp> {
   }
 
   registration() async {
-    if (_namecontroller.text != "" &&
-        _mailcontroller.text != "") {
+    if (_namecontroller.text != "" && _mailcontroller.text != "") {
       setState(() {
         _isLoading = true;
       });
       try {
-        UserCredential userCredential =
-            await FirebaseAuth.instance.createUserWithEmailAndPassword(
-          email: _email,
-          password: _password,
+        final UserCredential userCredential = await FirebaseAuth.instance
+            .createUserWithEmailAndPassword(email: _email, password: _password);
+        final User? user = userCredential.user;
+        await _firestore
+            .collection('users')
+            .doc(user!.uid)
+            .set(UserData(name: _name, email: _email, id: user.uid).toMap());
+        await _firestore.collection('user_data').doc(user.uid).set(
+          UserProperties(id: user.uid).toMap(),
         );
-        await _firestore.collection('users').doc().set(
-              UserData(
-                id: _firestore.collection('users').doc().id,
-                name: _name,
-                email: _email,
-              ).toMap(),
-            );
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             backgroundColor: primaryColor,
             content: Text(
               "Registration is successfull",
-              style: GoogleFonts.raleway(
-                fontSize: 18,
-                color: Colors.white,
-              ),
+              style: GoogleFonts.raleway(fontSize: 18, color: Colors.white),
             ),
           ),
         );
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(
-            builder: (context) => const LogIn(),
-          ),
+          MaterialPageRoute(builder: (context) => const LogIn()),
         );
       } on FirebaseAuthException {
         final snapShot = await FirebaseFirestore.instance
             .collection('users')
-            .where(
-              'email',
-              isEqualTo: _email,
-            )
+            .where('email', isEqualTo: _email)
             .get();
         if (snapShot.docs.isNotEmpty) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -92,27 +82,21 @@ class _SignUpState extends State<SignUp> {
               backgroundColor: Colors.orangeAccent,
               content: Text(
                 "Email already exists",
-                style: GoogleFonts.raleway(
-                  fontSize: 18,
-                  color: Colors.white,
-                ),
+                style: GoogleFonts.raleway(fontSize: 18, color: Colors.white),
               ),
             ),
           );
         }
         final bool emailValid = RegExp(
-                r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
-            .hasMatch(_email);
+          r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+",
+        ).hasMatch(_email);
         if (!emailValid) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               backgroundColor: Colors.redAccent,
               content: Text(
                 "Enter correct data!",
-                style: GoogleFonts.raleway(
-                  fontSize: 18,
-                  color: Colors.white,
-                ),
+                style: GoogleFonts.raleway(fontSize: 18, color: Colors.white),
               ),
             ),
           );
@@ -163,14 +147,13 @@ class _SignUpState extends State<SignUp> {
           child: Column(
             children: [
               SizedBox(
-                  width: MediaQuery.of(context).size.width,
-                  child: Image.asset(
-                    "assets/images/applogo.png",
-                    fit: BoxFit.cover,
-                  )),
-              const SizedBox(
-                height: 30.0,
+                width: MediaQuery.of(context).size.width,
+                child: Image.asset(
+                  "assets/images/applogo.png",
+                  fit: BoxFit.cover,
+                ),
               ),
+              const SizedBox(height: 30.0),
               Padding(
                 padding: const EdgeInsets.only(left: 20.0, right: 20.0),
                 child: Form(
@@ -179,10 +162,13 @@ class _SignUpState extends State<SignUp> {
                     children: [
                       Container(
                         padding: const EdgeInsets.symmetric(
-                            vertical: 2.0, horizontal: 30.0),
+                          vertical: 2.0,
+                          horizontal: 30.0,
+                        ),
                         decoration: BoxDecoration(
-                            color: const Color(0xFFedf0f8),
-                            borderRadius: BorderRadius.circular(30)),
+                          color: const Color(0xFFedf0f8),
+                          borderRadius: BorderRadius.circular(30),
+                        ),
                         child: TextFormField(
                           validator: (value) {
                             if (value == null || value.isEmpty) {
@@ -202,15 +188,16 @@ class _SignUpState extends State<SignUp> {
                           ),
                         ),
                       ),
-                      const SizedBox(
-                        height: 30.0,
-                      ),
+                      const SizedBox(height: 30.0),
                       Container(
                         padding: const EdgeInsets.symmetric(
-                            vertical: 2.0, horizontal: 30.0),
+                          vertical: 2.0,
+                          horizontal: 30.0,
+                        ),
                         decoration: BoxDecoration(
-                            color: const Color(0xFFedf0f8),
-                            borderRadius: BorderRadius.circular(30)),
+                          color: const Color(0xFFedf0f8),
+                          borderRadius: BorderRadius.circular(30),
+                        ),
                         child: TextFormField(
                           validator: (value) {
                             if (value == null || value.isEmpty) {
@@ -230,15 +217,16 @@ class _SignUpState extends State<SignUp> {
                           ),
                         ),
                       ),
-                      const SizedBox(
-                        height: 30.0,
-                      ),
+                      const SizedBox(height: 30.0),
                       Container(
                         padding: const EdgeInsets.symmetric(
-                            vertical: 2.0, horizontal: 30.0),
+                          vertical: 2.0,
+                          horizontal: 30.0,
+                        ),
                         decoration: BoxDecoration(
-                            color: const Color(0xFFedf0f8),
-                            borderRadius: BorderRadius.circular(30)),
+                          color: const Color(0xFFedf0f8),
+                          borderRadius: BorderRadius.circular(30),
+                        ),
                         child: TextFormField(
                           validator: (value) {
                             if (value == null || value.isEmpty) {
@@ -259,9 +247,7 @@ class _SignUpState extends State<SignUp> {
                           obscureText: true,
                         ),
                       ),
-                      const SizedBox(
-                        height: 30.0,
-                      ),
+                      const SizedBox(height: 30.0),
                       GestureDetector(
                         onTap: () {
                           if (_formkey.currentState!.validate()) {
@@ -274,46 +260,48 @@ class _SignUpState extends State<SignUp> {
                           registration();
                         },
                         child: Container(
-                            width: MediaQuery.of(context).size.width,
-                            padding: const EdgeInsets.symmetric(
-                                vertical: 13.0, horizontal: 30.0),
-                            decoration: BoxDecoration(
-                                color: primaryColor,
-                                borderRadius: BorderRadius.circular(30)),
-                            child: Center(
-                                child: _isLoading
-                                    ? const CircularProgressIndicator(
-                                        valueColor:
-                                            AlwaysStoppedAnimation<Color>(
-                                                Colors.white),
-                                        strokeWidth: 5,
-                                      )
-                                    : Text(
-                                        "Sign Up",
-                                        style: GoogleFonts.raleway(
-                                          color: Colors.white,
-                                          fontSize: 22.0,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ))),
+                          width: MediaQuery.of(context).size.width,
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 13.0,
+                            horizontal: 30.0,
+                          ),
+                          decoration: BoxDecoration(
+                            color: primaryColor,
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                          child: Center(
+                            child: _isLoading
+                                ? const CircularProgressIndicator(
+                                    valueColor: AlwaysStoppedAnimation<Color>(
+                                      Colors.white,
+                                    ),
+                                    strokeWidth: 5,
+                                  )
+                                : Text(
+                                    "Sign Up",
+                                    style: GoogleFonts.raleway(
+                                      color: Colors.white,
+                                      fontSize: 22.0,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                          ),
+                        ),
                       ),
                     ],
                   ),
                 ),
               ),
-              const SizedBox(
-                height: 40.0,
-              ),
+              const SizedBox(height: 40.0),
               Text(
                 "or LogIn with",
                 style: GoogleFonts.raleway(
-                    color: const Color(0xFF273671),
-                    fontSize: 22.0,
-                    fontWeight: FontWeight.w500),
+                  color: const Color(0xFF273671),
+                  fontSize: 22.0,
+                  fontWeight: FontWeight.w500,
+                ),
               ),
-              const SizedBox(
-                height: 30.0,
-              ),
+              const SizedBox(height: 30.0),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -330,24 +318,25 @@ class _SignUpState extends State<SignUp> {
                   ),
                 ],
               ),
-              const SizedBox(
-                height: 40.0,
-              ),
+              const SizedBox(height: 40.0),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text("Already have an account?",
-                      style: GoogleFonts.raleway(
-                          color: const Color(0xFF8c8e98),
-                          fontSize: 18.0,
-                          fontWeight: FontWeight.w500)),
-                  const SizedBox(
-                    width: 5.0,
+                  Text(
+                    "Already have an account?",
+                    style: GoogleFonts.raleway(
+                      color: const Color(0xFF8c8e98),
+                      fontSize: 18.0,
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
+                  const SizedBox(width: 5.0),
                   GestureDetector(
                     onTap: () {
-                      Navigator.pushReplacement(context,
-                          MaterialPageRoute(builder: (context) => const LogIn()));
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(builder: (context) => const LogIn()),
+                      );
                     },
                     child: const Text(
                       "LogIn",
@@ -359,7 +348,7 @@ class _SignUpState extends State<SignUp> {
                     ),
                   ),
                 ],
-              )
+              ),
             ],
           ),
         ),

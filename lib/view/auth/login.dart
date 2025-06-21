@@ -55,39 +55,32 @@ class _LogInState extends State<LogIn> {
         );
         final email = FirebaseAuth.instance.currentUser!.email;
         final userInfo = await FirebaseFirestore.instance
-          .collection('users')
-          .where('email', isEqualTo: email)
-          .get();
-        List<UserData> userData =
-          userInfo.docs.map((e) => UserData.fromMap(e.id, e.data())).toList();
+            .collection('users')
+            .where('email', isEqualTo: email)
+            .get();
+        List<UserData> userData = userInfo.docs
+            .map((e) => UserData.fromMap(e.id, e.data()))
+            .toList();
         final SharedPreferences pref = await SharedPreferences.getInstance();
-        pref.setString(
-            'username', userData.first.name);
+        pref.setString('username', userData.first.name);
+        pref.setString('userid', userData.first.id);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             backgroundColor: primaryColor,
             content: Text(
               "Login succesfully!",
-              style: GoogleFonts.raleway(
-                fontSize: 18,
-                color: Colors.white,
-              ),
+              style: GoogleFonts.raleway(fontSize: 18, color: Colors.white),
             ),
           ),
         );
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(
-            builder: (context) => const HomeNavigation(),
-          ),
+          MaterialPageRoute(builder: (context) => const HomeNavigation()),
         );
       } on FirebaseAuthException {
         final snapShot = await FirebaseFirestore.instance
             .collection('users')
-            .where(
-              'email',
-              isEqualTo: _email,
-            )
+            .where('email', isEqualTo: _email)
             .get();
         if (snapShot.docs.isEmpty) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -95,10 +88,7 @@ class _LogInState extends State<LogIn> {
               backgroundColor: Colors.orangeAccent,
               content: Text(
                 "No user found on this email",
-                style: GoogleFonts.raleway(
-                  fontSize: 18,
-                  color: Colors.white,
-                ),
+                style: GoogleFonts.raleway(fontSize: 18, color: Colors.white),
               ),
             ),
           );
@@ -149,14 +139,13 @@ class _LogInState extends State<LogIn> {
           child: Column(
             children: [
               SizedBox(
-                  width: MediaQuery.of(context).size.width,
-                  child: Image.asset(
-                    "assets/images/applogo.png",
-                    fit: BoxFit.cover,
-                  )),
-              const SizedBox(
-                height: 30.0,
+                width: MediaQuery.of(context).size.width,
+                child: Image.asset(
+                  "assets/images/applogo.png",
+                  fit: BoxFit.cover,
+                ),
               ),
+              const SizedBox(height: 30.0),
               Padding(
                 padding: const EdgeInsets.only(left: 20.0, right: 20.0),
                 child: Form(
@@ -165,10 +154,13 @@ class _LogInState extends State<LogIn> {
                     children: [
                       Container(
                         padding: const EdgeInsets.symmetric(
-                            vertical: 2.0, horizontal: 30.0),
+                          vertical: 2.0,
+                          horizontal: 30.0,
+                        ),
                         decoration: BoxDecoration(
-                            color: const Color(0xFFedf0f8),
-                            borderRadius: BorderRadius.circular(30)),
+                          color: const Color(0xFFedf0f8),
+                          borderRadius: BorderRadius.circular(30),
+                        ),
                         child: TextFormField(
                           validator: (value) {
                             if (value == null || value.isEmpty) {
@@ -178,24 +170,26 @@ class _LogInState extends State<LogIn> {
                           },
                           controller: _emailController,
                           decoration: InputDecoration(
-                              border: InputBorder.none,
-                              hintText: "Email",
-                              hintStyle: GoogleFonts.nunito(
-                                color: const Color(0xFFb2b7bf),
-                                fontSize: 18.0,
-                                fontWeight: FontWeight.w600,
-                              )),
+                            border: InputBorder.none,
+                            hintText: "Email",
+                            hintStyle: GoogleFonts.nunito(
+                              color: const Color(0xFFb2b7bf),
+                              fontSize: 18.0,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
                         ),
                       ),
-                      const SizedBox(
-                        height: 30.0,
-                      ),
+                      const SizedBox(height: 30.0),
                       Container(
                         padding: const EdgeInsets.symmetric(
-                            vertical: 2.0, horizontal: 30.0),
+                          vertical: 2.0,
+                          horizontal: 30.0,
+                        ),
                         decoration: BoxDecoration(
-                            color: const Color(0xFFedf0f8),
-                            borderRadius: BorderRadius.circular(30)),
+                          color: const Color(0xFFedf0f8),
+                          borderRadius: BorderRadius.circular(30),
+                        ),
                         child: TextFormField(
                           controller: _passwordController,
                           validator: (value) {
@@ -205,19 +199,18 @@ class _LogInState extends State<LogIn> {
                             return null;
                           },
                           decoration: InputDecoration(
-                              border: InputBorder.none,
-                              hintText: "Password",
-                              hintStyle: GoogleFonts.nunito(
-                                color: const Color(0xFFb2b7bf),
-                                fontSize: 18.0,
-                                fontWeight: FontWeight.w600,
-                              )),
+                            border: InputBorder.none,
+                            hintText: "Password",
+                            hintStyle: GoogleFonts.nunito(
+                              color: const Color(0xFFb2b7bf),
+                              fontSize: 18.0,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
                           obscureText: true,
                         ),
                       ),
-                      const SizedBox(
-                        height: 30.0,
-                      ),
+                      const SizedBox(height: 30.0),
                       GestureDetector(
                         onTap: () {
                           if (_formkey.currentState!.validate()) {
@@ -229,63 +222,67 @@ class _LogInState extends State<LogIn> {
                           userLogin();
                         },
                         child: Container(
-                            width: MediaQuery.of(context).size.width,
-                            padding: const EdgeInsets.symmetric(
-                                vertical: 13.0, horizontal: 30.0),
-                            decoration: BoxDecoration(
-                                color: primaryColor,
-                                borderRadius: BorderRadius.circular(30)),
-                            child: Center(
-                                child: _isLoading
-                                    ? const CircularProgressIndicator(
-                                        valueColor:
-                                            AlwaysStoppedAnimation<Color>(
-                                          Colors.white,
-                                        ),
-                                        strokeWidth: 5,
-                                      )
-                                    : Text(
-                                        "Sign In",
-                                        style: GoogleFonts.raleway(
-                                          color: Colors.white,
-                                          fontSize: 22.0,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ))),
+                          width: MediaQuery.of(context).size.width,
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 13.0,
+                            horizontal: 30.0,
+                          ),
+                          decoration: BoxDecoration(
+                            color: primaryColor,
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                          child: Center(
+                            child: _isLoading
+                                ? const CircularProgressIndicator(
+                                    valueColor: AlwaysStoppedAnimation<Color>(
+                                      Colors.white,
+                                    ),
+                                    strokeWidth: 5,
+                                  )
+                                : Text(
+                                    "Sign In",
+                                    style: GoogleFonts.raleway(
+                                      color: Colors.white,
+                                      fontSize: 22.0,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                          ),
+                        ),
                       ),
                     ],
                   ),
                 ),
               ),
-              const SizedBox(
-                height: 20.0,
-              ),
+              const SizedBox(height: 20.0),
               GestureDetector(
                 onTap: () {
                   Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const ForgotPassword()));
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const ForgotPassword(),
+                    ),
+                  );
                 },
-                child: Text("Forgot Password?",
-                    style: GoogleFonts.raleway(
-                        color: const Color(0xFF8c8e98),
-                        fontSize: 18.0,
-                        fontWeight: FontWeight.w500)),
+                child: Text(
+                  "Forgot Password?",
+                  style: GoogleFonts.raleway(
+                    color: const Color(0xFF8c8e98),
+                    fontSize: 18.0,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
               ),
-              const SizedBox(
-                height: 40.0,
-              ),
+              const SizedBox(height: 40.0),
               const Text(
                 "or LogIn with",
                 style: TextStyle(
-                    color: Color(0xFF273671),
-                    fontSize: 22.0,
-                    fontWeight: FontWeight.w500),
+                  color: Color(0xFF273671),
+                  fontSize: 22.0,
+                  fontWeight: FontWeight.w500,
+                ),
               ),
-              const SizedBox(
-                height: 30.0,
-              ),
+              const SizedBox(height: 30.0),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -302,35 +299,37 @@ class _LogInState extends State<LogIn> {
                   ),
                 ],
               ),
-              const SizedBox(
-                height: 40.0,
-              ),
+              const SizedBox(height: 40.0),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text("Don't have an account?",
-                      style: GoogleFonts.raleway(
-                          color: const Color(0xFF8c8e98),
-                          fontSize: 18.0,
-                          fontWeight: FontWeight.w500)),
-                  const SizedBox(
-                    width: 5.0,
+                  Text(
+                    "Don't have an account?",
+                    style: GoogleFonts.raleway(
+                      color: const Color(0xFF8c8e98),
+                      fontSize: 18.0,
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
+                  const SizedBox(width: 5.0),
                   GestureDetector(
                     onTap: () {
-                      Navigator.pushReplacement(context,
-                          MaterialPageRoute(builder: (context) => const SignUp()));
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(builder: (context) => const SignUp()),
+                      );
                     },
                     child: const Text(
                       "SignUp",
                       style: TextStyle(
-                          color: Color(0xFF273671),
-                          fontSize: 20.0,
-                          fontWeight: FontWeight.bold),
+                        color: Color(0xFF273671),
+                        fontSize: 20.0,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                 ],
-              )
+              ),
             ],
           ),
         ),
