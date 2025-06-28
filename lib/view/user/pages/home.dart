@@ -62,10 +62,27 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          "QuickStudy",
-          style: GoogleFonts.raleway(
-              fontWeight: FontWeight.bold, color: textPrimaryColor),
+        title: Padding(
+          padding: EdgeInsets.only(left: 10),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Material(
+                elevation: 5.0,
+                shadowColor: Colors.black12,
+                borderRadius: BorderRadius.circular(50),
+                child: Container(
+                  padding: const EdgeInsets.all(2),
+                  child: Image.asset(
+                    'assets/images/appbarlogo.png',
+                    height: 45,
+                    width: 45,
+                    fit: BoxFit.fitWidth,
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
         actions: [
           Container(

@@ -26,9 +26,12 @@ class _UserProfileState extends State<UserProfile> {
   }
 
   void _operate(int index) {
-    switch(index) {
+    switch (index) {
       case 3:
-        Navigator.push(context, MaterialPageRoute(builder: (context) => UserCart(uid: _userData.id),),);
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => UserCart(uid: _userData.id)),
+        );
       case 4:
         AuthMethods().signOff(context);
       default:
@@ -45,17 +48,17 @@ class _UserProfileState extends State<UserProfile> {
           .collection('users')
           .where('email', isEqualTo: email)
           .get();
-      List<UserData> userData =
-          userInfo.docs.map((e) => UserData.fromMap(e.id, e.data())).toList();
+      List<UserData> userData = userInfo.docs
+          .map((e) => UserData.fromMap(e.id, e.data()))
+          .toList();
       _userData = userData.first;
     } catch (e) {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
             "Something went wrong!",
-            style: GoogleFonts.nunito(
-              color: Colors.white,
-            ),
+            style: GoogleFonts.nunito(color: Colors.white),
           ),
         ),
       );
@@ -81,10 +84,7 @@ class _UserProfileState extends State<UserProfile> {
           ),
         ),
         actions: [
-          IconButton(
-            onPressed: () {},
-            icon: const Icon(Icons.settings),
-          ),
+          IconButton(onPressed: () {}, icon: const Icon(Icons.settings)),
         ],
       ),
       body: _isLoading
@@ -105,9 +105,7 @@ class _UserProfileState extends State<UserProfile> {
                       radius: 50,
                       backgroundImage: NetworkImage(_userData.photoUrl),
                     ),
-                    const SizedBox(
-                      height: 20,
-                    ),
+                    const SizedBox(height: 20),
                     Text(
                       _userData.name,
                       style: GoogleFonts.raleway(
@@ -126,17 +124,13 @@ class _UserProfileState extends State<UserProfile> {
                   ],
                 ),
                 // user status component
-                const SizedBox(
-                  height: 25,
-                ),
+                const SizedBox(height: 25),
                 const Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
                       "Complete Your Profile",
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                      ),
+                      style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                     Text(
                       "(2/5)",
@@ -147,9 +141,7 @@ class _UserProfileState extends State<UserProfile> {
                     ),
                   ],
                 ),
-                const SizedBox(
-                  height: 10,
-                ),
+                const SizedBox(height: 10),
                 Row(
                   children: List.generate(5, (index) {
                     return Expanded(
@@ -157,15 +149,14 @@ class _UserProfileState extends State<UserProfile> {
                         height: 7,
                         margin: EdgeInsets.only(right: index == 4 ? 0 : 6),
                         decoration: BoxDecoration(
-                            color: index == 0 ? primaryColor : Colors.black12,
-                            borderRadius: BorderRadius.circular(20)),
+                          color: index == 0 ? primaryColor : Colors.black12,
+                          borderRadius: BorderRadius.circular(20),
+                        ),
                       ),
                     );
                   }),
                 ),
-                const SizedBox(
-                  height: 10,
-                ),
+                const SizedBox(height: 10),
                 SizedBox(
                   height: 180,
                   child: ListView.separated(
@@ -175,18 +166,21 @@ class _UserProfileState extends State<UserProfile> {
                     itemBuilder: (context, index) => SizedBox(
                       width: 160,
                       child: Card(
+                        shape: RoundedRectangleBorder(
+                          side: BorderSide(
+                            color: Colors.grey,
+                            width: 0.2,
+                            strokeAlign: 0.2,
+                          ),
+                          borderRadius: BorderRadius.circular(25),
+                        ),
                         shadowColor: Colors.black12,
                         child: Padding(
                           padding: const EdgeInsets.all(15),
                           child: Column(
                             children: [
-                              Icon(
-                                profileCards[index].icon,
-                                size: 30,
-                              ),
-                              const SizedBox(
-                                height: 10,
-                              ),
+                              Icon(profileCards[index].icon, size: 30),
+                              const SizedBox(height: 10),
                               Text(
                                 profileCards[index].title,
                                 textAlign: TextAlign.center,
@@ -203,8 +197,9 @@ class _UserProfileState extends State<UserProfile> {
                                 ),
                                 child: Text(
                                   profileCards[index].buttonText,
-                                  style:
-                                      GoogleFonts.nunito(color: Colors.white),
+                                  style: GoogleFonts.nunito(
+                                    color: Colors.white,
+                                  ),
                                 ),
                               ),
                             ],
@@ -216,9 +211,7 @@ class _UserProfileState extends State<UserProfile> {
                         const Padding(padding: EdgeInsets.only(right: 5)),
                   ),
                 ),
-                const SizedBox(
-                  height: 35,
-                ),
+                const SizedBox(height: 35),
                 ...List.generate(
                   optionCards.length,
                   (index) => Padding(
@@ -226,6 +219,10 @@ class _UserProfileState extends State<UserProfile> {
                     child: Card(
                       elevation: 4,
                       shadowColor: Colors.black12,
+                      shape: RoundedRectangleBorder(
+                        side: BorderSide(color: primaryColor, width: 0.1),
+                        borderRadius: BorderRadius.circular(7),
+                      ),
                       child: ListTile(
                         title: Text(optionCards[index].optionTitle),
                         leading: Icon(optionCards[index].leadingIcon),
@@ -267,28 +264,22 @@ class ProfileCard {
   final String buttonText;
   final IconData icon;
 
-  ProfileCard(
-      {required this.title, required this.buttonText, required this.icon});
+  ProfileCard({
+    required this.title,
+    required this.buttonText,
+    required this.icon,
+  });
 }
 
 class OptionCard {
   final String optionTitle;
   final IconData leadingIcon;
-  OptionCard({
-    required this.optionTitle,
-    required this.leadingIcon,
-  });
+  OptionCard({required this.optionTitle, required this.leadingIcon});
 }
 
 List<OptionCard> optionCards = [
-  OptionCard(
-    optionTitle: "Activity",
-    leadingIcon: Icons.insights,
-  ),
-  OptionCard(
-    optionTitle: "Location",
-    leadingIcon: Icons.gps_fixed,
-  ),
+  OptionCard(optionTitle: "Activity", leadingIcon: Icons.insights),
+  OptionCard(optionTitle: "Location", leadingIcon: Icons.gps_fixed),
   OptionCard(
     optionTitle: "Notification",
     leadingIcon: Icons.notifications_none,
@@ -297,10 +288,7 @@ List<OptionCard> optionCards = [
     optionTitle: "Saved Courses",
     leadingIcon: Icons.shopping_cart_outlined,
   ),
-  OptionCard(
-    optionTitle: "Log Out",
-    leadingIcon: Icons.logout,
-  ),
+  OptionCard(optionTitle: "Log Out", leadingIcon: Icons.logout),
 ];
 
 List<ProfileCard> profileCards = [

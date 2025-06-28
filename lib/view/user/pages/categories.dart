@@ -142,11 +142,12 @@ class _CategoriesState extends State<Categories> {
               physics: const BouncingScrollPhysics(),
               slivers: [
                 SliverAppBar(
-                  expandedHeight: 260,
+                  expandedHeight: 240,
                   centerTitle: false,
                   pinned: true,
                   floating: true,
                   backgroundColor: primaryColor,
+                  
                   elevation: 0,
                   shape: const RoundedRectangleBorder(
                     borderRadius: BorderRadius.only(
@@ -154,104 +155,138 @@ class _CategoriesState extends State<Categories> {
                       bottomRight: Radius.circular(30),
                     ),
                   ),
-                  title: Text(
+                  title: Padding(
+                    padding: EdgeInsets.only(left: 10),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Material(
+                          elevation: 5.0,
+                          shadowColor: Colors.black12,
+                          borderRadius: BorderRadius.circular(50),
+                          child: Container(
+                            padding: const EdgeInsets.all(2),
+                            child: Image.asset(
+                              'assets/images/appbarlogo.png',
+                              height: 45,
+                              width: 45,
+                              fit: BoxFit.fitWidth,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  /*Text(
                     "QuickStudy",
                     style: GoogleFonts.raleway(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
                     ),
-                  ),
+                  ),*/
                   flexibleSpace: LayoutBuilder(builder: (context, constraints) {
                     var top = constraints.biggest.height;
                     double opacity = (top - kToolbarHeight) / 200;
                     opacity = opacity.clamp(0.0, 1.0);
                     return FlexibleSpaceBar(
-                      background: Opacity(
-                        opacity: opacity,
-                        child: SafeArea(
-                          child: Column(
-                            children: [
-                              const SizedBox(
-                                height: kToolbarHeight + 16,
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 16),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      "Welcome, $_userName!",
-                                      style: GoogleFonts.raleway(
-                                        fontSize: 28,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.white,
+                      background: Container(
+                        decoration: BoxDecoration(
+                          gradient: appbarGradientColor,
+                          borderRadius: BorderRadius.only(
+                            bottomLeft: Radius.circular(30),
+                            bottomRight: Radius.circular(30),
+                          ),
+                        ),
+                        child: Opacity(
+                          opacity: opacity,
+                          child: SafeArea(
+                            child: Column(
+                              children: [
+                                const SizedBox(
+                                  height: kToolbarHeight + 16,
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        "Welcome, $_userName!",
+                                        style: GoogleFonts.raleway(
+                                          fontSize: 22,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white,
+                                        ),
                                       ),
-                                    ),
-                                    const SizedBox(
-                                      height: 8,
-                                    ),
-                                    Text(
-                                      "Here's all you need for",
-                                      style: GoogleFonts.robotoSerif(
-                                        fontSize: 16,
-                                        color: Colors.white,
+                                      const SizedBox(
+                                        height: 8,
                                       ),
-                                    ),
-                                    const SizedBox(
-                                      height: 16,
-                                    ),
-                                    Container(
-                                      decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        borderRadius: BorderRadius.circular(8),
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color:
-                                                Colors.black.withOpacity(0.1),
-                                            blurRadius: 4,
-                                            offset: const Offset(0, 2),
-                                          ),
-                                        ],
+                                      Text(
+                                        "Here's all you need for",
+                                        style: GoogleFonts.robotoSerif(
+                                          fontSize: 16,
+                                          color: Colors.white,
+                                        ),
                                       ),
-                                      child: TextField(
-                                        controller: _searchController,
-                                        onChanged: (value) =>
-                                            _filterCategories(value),
-                                        decoration: InputDecoration(
-                                          hintText: "Search categories...",
-                                          hintStyle: GoogleFonts.robotoSerif(
-                                            fontWeight: FontWeight.w500,
-                                          ),
-                                          prefixIcon: const Icon(
-                                            Icons.search,
-                                            color: primaryColor,
-                                          ),
-                                          suffixIcon: _searchController
-                                                  .text.isNotEmpty
-                                              ? IconButton(
-                                                  onPressed: () {
-                                                    _searchController.clear();
-                                                    _filterCategories('');
-                                                  },
-                                                  icon: const Icon(
-                                                    Icons.clear,
-                                                    color: primaryColor,
-                                                  ),
-                                                )
-                                              : null,
-                                          border: InputBorder.none,
-                                          contentPadding: const EdgeInsets.symmetric(
-                                            horizontal: 16,
-                                            vertical: 12,
+                                      const SizedBox(
+                                        height: 16,
+                                      ),
+                                      Container(
+                                        decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          borderRadius: BorderRadius.circular(15),
+                                          border: Border.all(color: primaryColor, width: 1),
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color:
+                                                  Colors.black.withOpacity(0.1),
+                                              blurRadius: 4,
+                                              offset: const Offset(0, 2),
+                                            ),
+                                          ],
+                                        ),
+                                        child: TextFormField(
+                                          controller: _searchController,
+                                          onChanged: (value) =>
+                                              _filterCategories(value),
+                                          decoration: InputDecoration(
+                                            hintText: "Search categories...",
+                                            hintStyle: TextStyle(
+                                              fontWeight: FontWeight.w500,
+                                              fontSize: 14,
+                                              color: Colors.black38,
+                                            ),
+                                            prefixIcon: const Icon(
+                                              Icons.search,
+                                              color: primaryColor,
+                                            ),
+                                            suffixIcon: _searchController
+                                                    .text.isNotEmpty
+                                                ? IconButton(
+                                                    onPressed: () {
+                                                      _searchController.clear();
+                                                      _filterCategories('');
+                                                    },
+                                                    icon: const Icon(
+                                                      Icons.clear,
+                                                      color: primaryColor,
+                                                    ),
+                                                  )
+                                                : null,
+                                            border: InputBorder.none,
+                                            contentPadding: const EdgeInsets.symmetric(
+                                              horizontal: 16,
+                                              vertical: 12,
+                                            ),
                                           ),
                                         ),
                                       ),
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         ),
                       ),
@@ -286,6 +321,7 @@ class _CategoriesState extends State<Categories> {
                             onSelected: (value) {
                               setState(() {
                                 _seletecdFilter = filter;
+                                
                               });
                               _filterCategories(
                                 _searchController.text,
@@ -337,8 +373,10 @@ class _CategoriesState extends State<Categories> {
     return Animate(
       child: Card(
         elevation: 0,
+        shadowColor: Colors.black12,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
+          side: BorderSide(color: Colors.grey, width: 0.2),
         ),
         child: InkWell(
           borderRadius: BorderRadius.circular(16),

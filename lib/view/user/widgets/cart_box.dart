@@ -21,11 +21,12 @@ class _CartBoxState extends State<CartBox> {
   @override
   Widget build(BuildContext context) {
     return Card(
-      elevation: 2,
+      elevation: 5,
       margin: EdgeInsets.symmetric(vertical: 8, horizontal: 10),
       shadowColor: Colors.black12,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(10),
+        side: BorderSide(color: primaryColor, width: 0.2),
       ),
       child: InkWell(
         onTap: () {},
@@ -49,13 +50,14 @@ class _CartBoxState extends State<CartBox> {
                       widget.categoryName,
                       style: GoogleFonts.raleway(
                         fontSize: 18,
+                        fontWeight: FontWeight.w600,
                         color: textPrimaryColor,
                       ),
                       overflow: TextOverflow.ellipsis,
                     ),
                     SizedBox(height: 5),
                     Text(
-                      widget.totalQuiz,
+                      widget.totalQuiz == '1' ? '${widget.totalQuiz} Quiz' : '${widget.totalQuiz} Quizzes',
                       style: GoogleFonts.nunito(
                         fontSize: 12,
                         color: textSecondaryColor,

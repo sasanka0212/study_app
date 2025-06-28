@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:study_app/classes/category.dart';
 import 'package:study_app/classes/quiz.dart';
 import 'package:study_app/view/user/pages/quiz_play_screen.dart';
@@ -161,6 +160,12 @@ class _ManageQuizScreenState extends State<ManageQuizScreen> {
                       icon: const Icon(Icons.arrow_back_ios),
                     ),
                   ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.only(
+                      bottomLeft: Radius.circular(30),
+                      bottomRight: Radius.circular(30),
+                    ),
+                  ),
                   actions: [
                     GestureDetector(
                       onTap: () {
@@ -198,7 +203,7 @@ class _ManageQuizScreenState extends State<ManageQuizScreen> {
                     ),
                   ],
                   foregroundColor: Colors.white,
-                  backgroundColor: const Color.fromARGB(225, 97, 113, 234),
+                  //backgroundColor: const Color.fromARGB(225, 97, 113, 234),
                   expandedHeight: 200,
                   floating: false,
                   pinned: true,
@@ -211,30 +216,70 @@ class _ManageQuizScreenState extends State<ManageQuizScreen> {
                         textAlign: TextAlign.center,
                         overflow: TextOverflow.ellipsis,
                         style: const TextStyle(
-                          fontSize: 12,
-                          color: Colors.white70,
+                          fontSize: 10,
+                          color: Colors.black54,
                         ),
+                        maxLines: 1,
                       ),
                     ),
-                    background: Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Icon(
-                            Icons.category_rounded,
-                            size: 64,
-                            color: Colors.white,
-                          ),
-                          const SizedBox(height: 16),
-                          Text(
-                            widget.category.name,
-                            style: const TextStyle(
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
+                    background: Container(
+                      decoration: BoxDecoration(
+                        gradient: appbarGradientColor,
+                        borderRadius: BorderRadius.only(
+                          bottomLeft: Radius.circular(30),
+                          bottomRight: Radius.circular(30),
+                        ),
+                      ),
+                      child: Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.only(left: 10),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Material(
+                                    elevation: 5.0,
+                                    shadowColor: Colors.black12,
+                                    borderRadius: BorderRadius.circular(50),
+                                    child: Container(
+                                      padding: const EdgeInsets.all(10),
+                                      child: widget.category.logo == ''
+                                          ? const Icon(
+                                              Icons.category_rounded,
+                                              size: 45,
+                                              color: Colors.white,
+                                            )
+                                          : Image.network(
+                                              widget.category.logo,
+                                              height: 45,
+                                              width: 45,
+                                              fit: BoxFit.fill,
+                                            ),
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
-                          ),
-                        ],
+                            /*widget.category.logo == '' 
+                            ? const Icon(
+                                Icons.category_rounded,
+                                size: 64,
+                                color: Colors.white,
+                              )
+                            : Image.network(widget.category.logo, height: 64, width: 64, fit: BoxFit.fill,),*/
+                            const SizedBox(height: 16),
+                            Text(
+                              widget.category.name,
+                              style: const TextStyle(
+                                fontSize: 24,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
@@ -266,6 +311,11 @@ class _ManageQuizScreenState extends State<ManageQuizScreen> {
             shadowColor: Colors.black26,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(26),
+              side: BorderSide(
+                color: primaryColor,
+                width: 0.2,
+                strokeAlign: 0.5,
+              ),
             ),
             child: InkWell(
               onTap: () async {
@@ -275,15 +325,15 @@ class _ManageQuizScreenState extends State<ManageQuizScreen> {
                     title: Text(
                       "Start Quiz",
                       style: GoogleFonts.raleway(
-                        color: Colors.greenAccent,
+                        color: Colors.black,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    content: const Text(
+                    content: Text(
                       "Do you want to start the quiz?",
-                      style: TextStyle(fontSize: 16),
+                      style: GoogleFonts.nunito(fontSize: 16),
                     ),
-                    icon: const Icon(Icons.start_outlined, color: primaryColor),
+                    icon: const Icon(Icons.arrow_forward, color: primaryColor),
                     actions: [
                       TextButton(
                         onPressed: () => Navigator.pop(context, false),
@@ -294,7 +344,7 @@ class _ManageQuizScreenState extends State<ManageQuizScreen> {
                         child: const Text(
                           "Start",
                           style: TextStyle(
-                            color: Colors.greenAccent,
+                            color: Colors.blueAccent,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -302,6 +352,7 @@ class _ManageQuizScreenState extends State<ManageQuizScreen> {
                     ],
                   ),
                 );
+                if (!mounted) return;
                 if (isEnter == true) {
                   Navigator.push(
                     context,
@@ -335,9 +386,9 @@ class _ManageQuizScreenState extends State<ManageQuizScreen> {
                           Text(
                             quiz.title,
                             style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 18,
-                              color: Colors.black,
+                              fontWeight: FontWeight.w700,
+                              fontSize: 16,
+                              color: Colors.black87,
                             ),
                           ),
                           Column(
@@ -353,8 +404,11 @@ class _ManageQuizScreenState extends State<ManageQuizScreen> {
                                   const SizedBox(width: 4),
                                   Text("${quiz.questions.length} Questions"),
                                   const SizedBox(width: 16),
-                                  const Icon(Icons.timer_outlined, size: 16),
-                                  Text("${quiz.timeLimit} mins"),
+                                  const Icon(Icons.timer_outlined, size: 16, color: Colors.black38,),
+                                  Text(
+                                    "${quiz.timeLimit} mins", 
+                                    style: TextStyle(color: Colors.black38),
+                                  ),
                                 ],
                               ),
                             ],

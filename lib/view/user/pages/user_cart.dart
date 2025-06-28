@@ -16,6 +16,7 @@ class UserCart extends StatefulWidget {
 class _UserCartState extends State<UserCart> {
   List<String> _cid = [];
   List<Category> _purchasedCategories = [];
+  List<int> _quizToCategory = [];
   bool _isLoading = false;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
@@ -60,6 +61,13 @@ class _UserCartState extends State<UserCart> {
       setState(() {
         _purchasedCategories = categories;
       });
+      for (int i = 0; i < _cid.length; i++) {
+        final snapShot = await _firestore
+            .collection('quizzes')
+            .where('categoryId', isEqualTo: _cid[i])
+            .get();
+        _quizToCategory.add(snapShot.size);
+      }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -134,7 +142,7 @@ class _UserCartState extends State<UserCart> {
                   final category = _purchasedCategories[index];
                   return CartBox(
                     categoryName: category.name,
-                    totalQuiz: '6',
+                    totalQuiz: '${_quizToCategory[index]}',
                     url: category.logo,
                   );
                 },

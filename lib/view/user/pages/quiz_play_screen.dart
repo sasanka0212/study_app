@@ -12,10 +12,7 @@ import 'package:study_app/view/user/widgets/custom_page_route.dart';
 
 class QuizPlayScreen extends StatefulWidget {
   final Quiz quiz;
-  const QuizPlayScreen({
-    super.key,
-    required this.quiz,
-  });
+  const QuizPlayScreen({super.key, required this.quiz});
 
   @override
   State<QuizPlayScreen> createState() => _QuizPlayScreenState();
@@ -158,7 +155,8 @@ class _QuizPlayScreenState extends State<QuizPlayScreen>
   }
 
   Color _getTimerColor() {
-    double timerProgress = 1 -
+    double timerProgress =
+        1 -
         ((_remainingMinutes * 60 + _remainingSeconds) / (_totalMinutes * 60));
     if (timerProgress < 0.4) return Colors.green;
     if (timerProgress < 0.6) return Colors.orange;
@@ -211,10 +209,7 @@ class _QuizPlayScreenState extends State<QuizPlayScreen>
                           decoration: BoxDecoration(
                             color: primaryColor.withOpacity(0.1),
                             borderRadius: BorderRadius.circular(50),
-                            border: Border.all(
-                              width: 2,
-                              color: primaryColor,
-                            ),
+                            border: Border.all(width: 2, color: primaryColor),
                           ),
                           padding: const EdgeInsets.all(8),
                           child: Icon(
@@ -240,7 +235,7 @@ class _QuizPlayScreenState extends State<QuizPlayScreen>
                               backgroundColor: Colors.grey[300],
                               value:
                                   (_remainingMinutes * 60 + _remainingSeconds) /
-                                      (_totalMinutes * 60),
+                                  (_totalMinutes * 60),
                               strokeWidth: 5,
                               valueColor: AlwaysStoppedAnimation<Color>(
                                 _getTimerColor(),
@@ -259,13 +254,12 @@ class _QuizPlayScreenState extends State<QuizPlayScreen>
                       ),
                     ],
                   ),
-                  const SizedBox(
-                    height: 20,
-                  ),
+                  const SizedBox(height: 20),
                   TweenAnimationBuilder<double>(
                     tween: Tween(
                       begin: 0,
-                      end: (_currentQuestionIndex + 1) /
+                      end:
+                          (_currentQuestionIndex + 1) /
                           widget.quiz.questions.length,
                     ),
                     duration: const Duration(milliseconds: 300),
@@ -317,7 +311,7 @@ class _QuizPlayScreenState extends State<QuizPlayScreen>
         GestureDetector(
           onVerticalDragEnd: (details) {
             if (details.velocity.pixelsPerSecond.dy < 0) {
-              _selectedAnswers[index] != null ? _nextQuestion() : null;
+              _nextQuestion();
             }
           },
           onHorizontalDragEnd: (details) {
@@ -326,9 +320,10 @@ class _QuizPlayScreenState extends State<QuizPlayScreen>
                 context,
                 CustomPageRoute(
                   child: YoutubeTutorial(
-                      question: question,
-                      totalQuestions: totalQs,
-                      index: index),
+                    question: question,
+                    totalQuestions: totalQs,
+                    index: index,
+                  ),
                 ),
               );
             }
@@ -349,6 +344,7 @@ class _QuizPlayScreenState extends State<QuizPlayScreen>
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
                   "Question ${index + 1}/$totalQs",
@@ -357,78 +353,92 @@ class _QuizPlayScreenState extends State<QuizPlayScreen>
                     fontSize: 16,
                   ),
                 ),
-                const SizedBox(
-                  height: 8,
-                ),
-                Text(
-                  question.text,
-                  style: const TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: textPrimaryColor,
+                const SizedBox(height: 8),
+                SizedBox(
+                  height: 200,
+                  width: double.infinity,
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.vertical,
+                    child: Text(
+                      question.text,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: textPrimaryColor,
+                      ),
+                      overflow: TextOverflow.fade,
+                    ),
                   ),
                 ),
-                const SizedBox(
-                  height: 24,
-                ),
-                ...question.options.asMap().entries.map((entry) {
-                  final optionIndex = entry.key;
-                  final option = entry.value;
-                  final isSelected = _selectedAnswers[index] == optionIndex;
-                  final isCorrect =
-                      _selectedAnswers[index] == question.correctIndex;
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8),
-                    child: AnimatedContainer(
-                      duration: const Duration(milliseconds: 300),
-                      decoration: BoxDecoration(
-                        color: isSelected
-                            ? isCorrect
-                                ? Colors.green.withOpacity(0.1)
-                                : Colors.redAccent.withOpacity(0.1)
-                            : Colors.white,
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(
-                          color: isSelected
-                              ? isCorrect
-                                  ? Colors.green
-                                  : Colors.redAccent
-                              : Colors.grey.shade300,
-                        ),
-                      ),
-                      child: ListTile(
-                        onTap: _selectedAnswers[index] == null
-                            ? () => _selectAnswer(optionIndex)
-                            : null,
-                        title: Text(
-                          option,
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w500,
-                            color: isSelected
-                                ? isCorrect
-                                    ? Colors.green
-                                    : Colors.redAccent
-                                : _selectedAnswers[index] != null
-                                    ? Colors.grey.shade500
-                                    : textPrimaryColor,
+                const SizedBox(height: 24),
+                SizedBox(
+                  height: 280,
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: question.options.asMap().entries.map((entry) {
+                        final optionIndex = entry.key;
+                        final option = entry.value;
+                        final isSelected =
+                            _selectedAnswers[index] == optionIndex;
+                        final isCorrect =
+                            _selectedAnswers[index] == question.correctIndex;
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 8),
+                          child: AnimatedContainer(
+                            duration: const Duration(milliseconds: 300),
+                            decoration: BoxDecoration(
+                              color: isSelected
+                                  ? isCorrect
+                                        ? Colors.green.withOpacity(0.1)
+                                        : Colors.redAccent.withOpacity(0.1)
+                                  : Colors.white,
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(
+                                color: isSelected
+                                    ? isCorrect
+                                          ? Colors.green
+                                          : Colors.redAccent
+                                    : Colors.grey.shade300,
+                              ),
+                            ),
+                            child: ListTile(
+                              onTap: _selectedAnswers[index] == null
+                                  ? () {
+                                      _selectAnswer(optionIndex);
+                                    }
+                                  : null,
+                              title: Text(
+                                option,
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                  color: isSelected
+                                      ? isCorrect
+                                            ? Colors.green
+                                            : Colors.redAccent
+                                      : _selectedAnswers[index] != null
+                                      ? Colors.grey.shade500
+                                      : textPrimaryColor,
+                                ),
+                              ),
+                              trailing: isSelected
+                                  ? isCorrect
+                                        ? const Icon(
+                                            Icons.check_circle_rounded,
+                                            color: Colors.green,
+                                          )
+                                        : const Icon(
+                                            Icons.close,
+                                            color: Colors.redAccent,
+                                          )
+                                  : null,
+                            ),
                           ),
-                        ),
-                        trailing: isSelected
-                            ? isCorrect
-                                ? const Icon(
-                                    Icons.check_circle_rounded,
-                                    color: Colors.green,
-                                  )
-                                : const Icon(
-                                    Icons.close,
-                                    color: Colors.redAccent,
-                                  )
-                            : null,
-                      ),
+                        );
+                      }).toList(),
                     ),
-                  );
-                }),
+                  ),
+                ),
                 const Spacer(),
                 /*
                 GestureDetector(
@@ -519,15 +529,10 @@ class _QuizPlayScreenState extends State<QuizPlayScreen>
                   color: Colors.white,
                   size: 80,
                 ),
-                const SizedBox(
-                  height: 20,
-                ),
+                const SizedBox(height: 20),
                 Text(
                   "Swipe down or right to interact!",
-                  style: GoogleFonts.nunito(
-                    color: Colors.white,
-                    fontSize: 20,
-                  ),
+                  style: GoogleFonts.nunito(color: Colors.white, fontSize: 20),
                 ),
               ],
             ),

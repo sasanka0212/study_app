@@ -43,7 +43,6 @@ class _YoutubeTutorialState extends State<YoutubeTutorial> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     final videoId = extractYouTubeId(url);
     _controller = YoutubePlayerController(
@@ -173,11 +172,17 @@ class _YoutubeTutorialState extends State<YoutubeTutorial> {
                         color: Colors.green,
                       ),
                     ),
-                    Text(
-                      widget.question.text,
-                      style: GoogleFonts.nunito(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w500,
+                    SizedBox(
+                      width: double.infinity,
+                      height: 150,
+                      child: SingleChildScrollView(
+                        child: Text(
+                          widget.question.text,
+                          style: GoogleFonts.nunito(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
                       ),
                     ),
                   ],

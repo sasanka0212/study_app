@@ -97,6 +97,7 @@ class _AddQuizScreenState extends State<AddQuizScreen> {
         ),
       );
     } catch (e) {
+      if (!mounted) return; 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
@@ -149,6 +150,7 @@ class _AddQuizScreenState extends State<AddQuizScreen> {
         ),
       );
       //return back to main screen
+      if (!mounted) return; 
       Navigator.pop(context);
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -186,10 +188,6 @@ class _AddQuizScreenState extends State<AddQuizScreen> {
       _questionsItem[index].dispose();
       _questionsItem.removeAt(index);
     });
-  }
-
-  Future<void> _fetchCategoryName() async {
-    try {} catch (e) {}
   }
 
   Future<void> _saveQuiz() async {
@@ -246,6 +244,7 @@ class _AddQuizScreenState extends State<AddQuizScreen> {
         ),
       );
       //return back to main screen
+      if (!mounted) return; 
       Navigator.pop(context);
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(

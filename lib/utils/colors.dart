@@ -3,21 +3,24 @@ import 'package:flutter/material.dart';
 const newBlack = Colors.black38;
 
 var redGradientColor = const LinearGradient(
-  colors: [
-    Color(0xffef729e),
-    Color(0xffec7c86),
-    Color(0xffed896d),
-  ],
+  colors: [Color(0xffef729e), Color(0xffec7c86), Color(0xffed896d)],
   begin: Alignment.topLeft,
   end: Alignment.bottomRight,
 );
 
 var blueGradientColor = const LinearGradient(
+  colors: [Color(0xff5174ed), Color(0xff2f95f4), Color(0xff0bb7fc)],
+);
+
+var appbarGradientColor = const LinearGradient(
   colors: [
-    Color(0xff5174ed),
-    Color(0xff2f95f4),
-    Color(0xff0bb7fc),
+    primaryColor,
+    Color.fromARGB(223, 123, 134, 223),
+    Color.fromARGB(223, 159, 167, 223),
+    Color.fromARGB(223, 218, 218, 224),
   ],
+  begin: Alignment.topCenter,
+  end: Alignment.bottomCenter,
 );
 
 const Color borderPrimary = Color(0xFFD9D9D9);
