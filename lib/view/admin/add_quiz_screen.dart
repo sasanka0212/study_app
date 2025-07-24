@@ -85,6 +85,7 @@ class _AddQuizScreenState extends State<AddQuizScreen> {
         _sheetQuestions.add(question);
         //print(question.options);
       });
+      if(!mounted) return true;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(

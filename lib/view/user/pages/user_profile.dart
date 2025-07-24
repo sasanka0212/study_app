@@ -6,6 +6,7 @@ import 'package:study_app/classes/user_data.dart';
 import 'package:study_app/firebase_services/auth.dart';
 import 'package:study_app/utils/colors.dart';
 import 'package:study_app/view/user/pages/user_cart.dart';
+import 'package:study_app/view/user/profile/update_profile.dart';
 
 class UserProfile extends StatefulWidget {
   const UserProfile({super.key});
@@ -35,6 +36,16 @@ class _UserProfileState extends State<UserProfile> {
       case 4:
         AuthMethods().signOff(context);
       default:
+    }
+  }
+
+  void _openScreen(int index) {
+    switch (index) {
+      case 0:
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => UpdateProfile(userData: _userData)),
+        );
     }
   }
 
@@ -187,7 +198,7 @@ class _UserProfileState extends State<UserProfile> {
                               ),
                               const Spacer(),
                               ElevatedButton(
-                                onPressed: () {},
+                                onPressed: () => _openScreen(index),
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: primaryColor,
                                   elevation: 0,

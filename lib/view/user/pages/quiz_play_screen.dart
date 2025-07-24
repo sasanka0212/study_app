@@ -7,6 +7,7 @@ import 'package:study_app/classes/question.dart';
 import 'package:study_app/classes/quiz.dart';
 import 'package:study_app/view/user/pages/quiz_result_screen.dart';
 import 'package:study_app/utils/colors.dart';
+import 'package:study_app/view/user/pages/video_player_screen.dart';
 import 'package:study_app/view/user/pages/youtube_tutorial.dart';
 import 'package:study_app/view/user/widgets/custom_page_route.dart';
 
@@ -33,7 +34,6 @@ class _QuizPlayScreenState extends State<QuizPlayScreen>
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _pageController = PageController();
     _totalMinutes = widget.quiz.questions.length;
@@ -319,11 +319,11 @@ class _QuizPlayScreenState extends State<QuizPlayScreen>
               Navigator.push(
                 context,
                 CustomPageRoute(
-                  child: YoutubeTutorial(
-                    question: question,
-                    totalQuestions: totalQs,
+                  child: VideoPlayerScreen(
+                    question: question, 
+                    totalQuestions: widget.quiz.questions.length, 
                     index: index,
-                  ),
+                  )
                 ),
               );
             }

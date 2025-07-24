@@ -24,7 +24,7 @@ class AuthMethods {
 
   signInWithGoogle(BuildContext context) async {
     final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
-    final GoogleSignIn googleSignIn = GoogleSignIn();
+    final GoogleSignIn googleSignIn = GoogleSignIn(signInOption: SignInOption.standard);
 
     final GoogleSignInAccount? googleSignInAccount = await googleSignIn
         .signIn();

@@ -124,7 +124,40 @@ class _HomeState extends State<Home> {
           ),
         ],
       ),
-      body: ListView(
+      body: 
+      _isLoading
+      ? Center(
+          child: Container(
+            width: 180,
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: primaryColor.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const CircularProgressIndicator(
+                  valueColor:
+                      AlwaysStoppedAnimation<Color>(primaryColor),
+                  strokeWidth: 3,
+                ),
+                const SizedBox(
+                  width: 10,
+                ),
+                Text(
+                  "Loading",
+                  style: GoogleFonts.nunito(
+                    color: primaryColor,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        )
+        : ListView(
         physics: const BouncingScrollPhysics(),
         padding: const EdgeInsets.only(left: 20, right: 30, bottom: 20),
         children: [
@@ -210,57 +243,25 @@ class _HomeState extends State<Home> {
                 ],
               ), 
             ),
-        _isLoading
-        ? Center(
-            child: Container(
-              width: 180,
-              padding: const EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                color: primaryColor.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const CircularProgressIndicator(
-                    valueColor:
-                        AlwaysStoppedAnimation<Color>(primaryColor),
-                    strokeWidth: 3,
-                  ),
-                  const SizedBox(
-                    width: 10,
-                  ),
-                  Text(
-                    "Loading",
-                    style: GoogleFonts.nunito(
-                      color: primaryColor,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 18,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          )
-        : ListView.builder(
-          physics: const NeverScrollableScrollPhysics(),
-            shrinkWrap: true,
-              itemCount: _favCategories.length,
-              itemBuilder: (context, index) {
-                final category = _favCategories[index];
-                return Container(
-                  margin: const EdgeInsets.only(bottom: 20),
-                  child: CourseBox(
-                    lvl: category.description, 
-                    title: category.name, 
-                    imageUrl: category.logo, 
-                    gradientColor: (index % 2 == 0) ? redGradientColor : blueGradientColor, 
-                    state: const Icon(Icons.play_arrow),
-                    onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => ManageQuizScreen(category: category),),),
-                  ),
-                );
-              },
-            ),
+            ListView.builder(
+              physics: const NeverScrollableScrollPhysics(),
+                shrinkWrap: true,
+                  itemCount: _favCategories.length,
+                  itemBuilder: (context, index) {
+                    final category = _favCategories[index];
+                    return Container(
+                      margin: const EdgeInsets.only(bottom: 20),
+                      child: CourseBox(
+                        lvl: category.description, 
+                        title: category.name, 
+                        imageUrl: category.logo, 
+                        gradientColor: (index % 2 == 0) ? redGradientColor : blueGradientColor, 
+                        state: const Icon(Icons.play_arrow),
+                        onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => ManageQuizScreen(category: category),),),
+                      ),
+                    );
+                  },
+                ),
         ],
       ),
     );
